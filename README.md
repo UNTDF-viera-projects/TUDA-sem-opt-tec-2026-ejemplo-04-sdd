@@ -28,7 +28,7 @@ Las reglas acordadas son las mismas en todos los ejemplos:
 | [`01-simple-plan`](01-simple-plan/) | **Plan mode + implement**: el agente arma un plan y lo ejecuta en una sola pasada. | El diff del commit de implementación. |
 | [`02-rpi`](02-rpi/) | **Research → Plan → Implement**: tres fases separadas, cada una con su prompt. | [`PROMPT-RESEARCH.md`](02-rpi/PROMPT-RESEARCH.md), [`PROMPT-PLAN.md`](02-rpi/PROMPT-PLAN.md), [`PROMPT-IMPLEMENT.md`](02-rpi/PROMPT-IMPLEMENT.md) |
 | [`03-sdd-manual`](03-sdd-manual/) | **SDD manual**: especificación, plan y tareas como documentos versionados que se revisan antes de implementar. | [`PROMPT-SPEC.md`](03-sdd-manual/PROMPT-SPEC.md), [`PROMPT-PLAN.md`](03-sdd-manual/PROMPT-PLAN.md), [`PROMPT-TASKS.md`](03-sdd-manual/PROMPT-TASKS.md) y [`docs/f1/`](03-sdd-manual/docs/f1/) |
-| `04-openspec` | **SDD con OpenSpec**. | *Pendiente de importar.* |
+| [`04-openspec`](04-openspec/) | **SDD con OpenSpec** usado desde opencode: el change propone, diseña y desglosa la funcionalidad en tareas. *Por ahora sin implementar.* | El change [`openspec/changes/cancel-registration/`](04-openspec/openspec/changes/cancel-registration/) (`proposal.md`, `design.md`, `specs/`, `tasks.md`) y los comandos `/opsx-*` en [`.opencode/`](04-openspec/.opencode/) |
 | `05-speckit` | **SDD con Spec Kit**. | *Pendiente de importar.* |
 
 ## Cómo ejecutar un ejemplo
