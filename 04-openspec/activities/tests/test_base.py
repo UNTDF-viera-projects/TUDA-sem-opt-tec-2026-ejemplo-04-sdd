@@ -9,8 +9,8 @@ from django.core.management import call_command
 from django.core.management.base import CommandError
 from django.db import connections, close_old_connections, transaction
 from django.test import Client, TestCase, TransactionTestCase
-from activities.models import Activity, DemoSeed, Registration
-from activities.services import register, with_availability
+from activities.models import Activity, Cancellation, DemoSeed, Registration
+from activities.services import cancel, cancellation_message, register, with_availability
 
 NOW = datetime(2030, 10, 1, 12, tzinfo=dt_timezone.utc)
 
@@ -165,3 +165,152 @@ class ConcurrencyTests(TransactionTestCase):
     def test_simultaneous_duplicate(self):
         self.assertCountEqual(self.race([self.ana,self.ana]),["registered","already_registered"])
         self.assertEqual(Registration.objects.count(),1)
+
+class CancelTests(TestCase):
+    def setUp(self):
+        User = get_user_model()
+        self.ana = User.objects.create_user("ana", password="test-pass")
+        self.bruno = User.objects.create_user("bruno", password="test-pass")
+        self.activity = activity()
+    def unenroll(self, user=None, **kwargs):
+        return cancel(student=user or self.ana, activity_id=self.activity.pk, now=NOW, **kwargs)
+    def test_success_frees_seat(self):
+        register(student=self.ana, activity_id=self.activity.pk, now=NOW)
+        register(student=self.bruno, activity_id=self.activity.pk, now=NOW)
+        self.assertEqual(with_availability().get(pk=self.activity.pk).available, 0)
+        self.assertEqual(self.unenroll(), "cancelled")
+        self.assertEqual(Registration.objects.count(), 1)
+        self.assertEqual(Cancellation.objects.count(), 1)
+        self.assertEqual(with_availability().get(pk=self.activity.pk).available, 1)
+    def test_exact_24h_allowed(self):
+        register(student=self.ana, activity_id=self.activity.pk, now=NOW)
+        self.activity.starts_at=NOW+timedelta(hours=24); self.activity.save()
+        self.assertEqual(self.unenroll(), "cancelled")
+        self.assertEqual(Cancellation.objects.count(), 1)
+    def test_inside_window_rejected(self):
+        register(student=self.ana, activity_id=self.activity.pk, now=NOW)
+        self.activity.starts_at=NOW+timedelta(hours=24)-timedelta(seconds=1); self.activity.save()
+        self.assertEqual(self.unenroll(), "too_late")
+        self.assertEqual(Registration.objects.count(), 1)
+        self.assertFalse(Cancellation.objects.exists())
+    def test_started_rejected(self):
+        register(student=self.ana, activity_id=self.activity.pk, now=NOW)
+        self.activity.starts_at=NOW; self.activity.save()
+        self.assertEqual(self.unenroll(), "too_late")
+        self.assertEqual(Registration.objects.count(), 1)
+    def test_disabled_allowed_with_same_window(self):
+        register(student=self.ana, activity_id=self.activity.pk, now=NOW)
+        self.activity.is_active=False; self.activity.save()
+        self.assertEqual(self.unenroll(), "cancelled")
+        self.assertEqual(Cancellation.objects.count(), 1)
+    def test_unknown_activity(self):
+        self.assertEqual(cancel(student=self.ana, activity_id=999999, now=NOW), "not_available")
+    def test_not_registered(self):
+        self.assertEqual(self.unenroll(), "not_registered")
+        self.assertFalse(Cancellation.objects.exists())
+    def test_double_cancel_idempotent_same_message(self):
+        register(student=self.ana, activity_id=self.activity.pk, now=NOW)
+        self.assertEqual(self.unenroll(), "cancelled")
+        first = cancellation_message(Cancellation.objects.get().cancelled_at)
+        self.assertEqual(self.unenroll(), "already_cancelled")
+        self.assertEqual(Cancellation.objects.count(), 1)
+        self.assertEqual(cancellation_message(Cancellation.objects.get().cancelled_at), first)
+        self.assertEqual(Registration.objects.count(), 0)
+    def test_no_reentry_after_cancel(self):
+        register(student=self.ana, activity_id=self.activity.pk, now=NOW)
+        self.unenroll()
+        expected = cancellation_message(Cancellation.objects.get().cancelled_at)
+        self.assertEqual(register(student=self.ana, activity_id=self.activity.pk, now=NOW), "already_cancelled")
+        self.assertEqual(expected, cancellation_message(Cancellation.objects.get().cancelled_at))
+        self.assertEqual(Registration.objects.count(), 0)
+    def test_message_format(self):
+        instant = datetime(2030, 10, 3, 17, 5, tzinfo=dt_timezone.utc)
+        self.assertEqual(cancellation_message(instant), "Ya cancelaste tu inscripción el 03/10/2030 a las 14:05")
+    def test_busy_is_recoverable(self):
+        from django.db import OperationalError
+        register(student=self.ana, activity_id=self.activity.pk, now=NOW)
+        with patch("activities.services.Activity.objects.filter", side_effect=OperationalError("database is locked")):
+            self.assertEqual(self.unenroll(), "busy")
+        self.assertEqual(Registration.objects.count(), 1)
+    def test_cancel_view_post_csrf_and_session_identity(self):
+        register(student=self.ana, activity_id=self.activity.pk, now=NOW)
+        client=Client(enforce_csrf_checks=True);client.force_login(self.ana)
+        url=f"/activities/{self.activity.pk}/cancel/"
+        self.assertEqual(client.get(url).status_code, 405)
+        self.assertEqual(client.post(url).status_code, 403)
+        page=client.get(f"/activities/{self.activity.pk}/")
+        with patch("activities.views.cancel", side_effect=lambda **kwargs: cancel(now=NOW, **kwargs)):
+            response=client.post(url, {"csrfmiddlewaretoken":client.cookies['csrftoken'].value,"student":self.bruno.pk})
+        self.assertEqual(response.status_code,302)
+        self.assertFalse(Registration.objects.exists())
+        self.assertEqual(Cancellation.objects.get().student,self.ana)
+        follow=client.get(f"/activities/{self.activity.pk}/")
+        self.assertContains(follow,"Ya cancelaste tu inscripción el")
+        self.assertNotContains(follow,"Inscribirme")
+    def test_mine_shows_cancellations(self):
+        register(student=self.ana, activity_id=self.activity.pk, now=NOW)
+        self.unenroll()
+        self.client.force_login(self.ana); response=self.client.get("/my-registrations/")
+        self.assertContains(response,"Cancelada el")
+    def test_admin_cancellation_read_only(self):
+        admin=get_user_model().objects.create_superuser("teacher","teacher@example.test","pass")
+        self.client.force_login(admin)
+        self.assertEqual(self.client.get("/admin/activities/cancellation/add/").status_code,403)
+        self.assertEqual(self.client.get("/admin/activities/cancellation/").status_code,200)
+    def test_reset_clears_cancellations_via_cascade(self):
+        call_command("seed_demo",reference_time=NOW.isoformat(),stdout=StringIO())
+        seeded=Activity.objects.get(seed_key="taller")
+        ana=get_user_model().objects.get(username="ana")
+        self.assertEqual(cancel(student=ana,activity_id=seeded.pk,now=NOW),"cancelled")
+        self.assertEqual(Cancellation.objects.count(),1)
+        call_command("reset_demo",confirm=True,reference_time=(NOW+timedelta(days=5)).isoformat(),stdout=StringIO())
+        self.assertEqual(Cancellation.objects.count(),0)
+
+class CancelConcurrencyTests(TransactionTestCase):
+    def setUp(self):
+        self.ana=get_user_model().objects.create_user("a");self.bruno=get_user_model().objects.create_user("b")
+        self.activity=activity(capacity=1)
+        register(student=self.ana,activity_id=self.activity.pk,now=NOW)
+    def test_default_clock_after_lock_rejects_inside_window(self):
+        self.activity.starts_at=NOW+timedelta(hours=25);self.activity.save()
+        def after_lock():
+            self.assertTrue(connections["default"].in_atomic_block)
+            return NOW+timedelta(hours=2)
+        with patch("activities.services.timezone.now",side_effect=after_lock) as clock:
+            self.assertEqual(cancel(student=self.ana,activity_id=self.activity.pk),"too_late")
+            clock.assert_called_once()
+        self.assertEqual(Registration.objects.count(),1)
+        self.assertFalse(Cancellation.objects.exists())
+    def cancel_race(self, users):
+        barrier=Barrier(2)
+        def worker(user):
+            close_old_connections()
+            try:
+                database=str(connections["default"].settings_dict["NAME"])
+                assert database.endswith("test.sqlite3"), database
+                barrier.wait(timeout=10)
+                return cancel(student=user,activity_id=self.activity.pk,now=NOW)
+            finally:connections["default"].close()
+        with ThreadPoolExecutor(max_workers=2) as executor: return list(executor.map(worker, users))
+    def test_simultaneous_double_cancel(self):
+        self.assertCountEqual(self.cancel_race([self.ana,self.ana]),["cancelled","already_cancelled"])
+        self.assertEqual(Registration.objects.count(),0)
+        self.assertEqual(Cancellation.objects.count(),1)
+    def test_cancel_vs_register_last_seat(self):
+        barrier=Barrier(2)
+        def worker(action):
+            close_old_connections()
+            try:
+                barrier.wait(timeout=10)
+                if action=="cancel": return cancel(student=self.ana,activity_id=self.activity.pk,now=NOW)
+                return register(student=self.bruno,activity_id=self.activity.pk,now=NOW)
+            finally:connections["default"].close()
+        with ThreadPoolExecutor(max_workers=2) as executor: results=list(executor.map(worker, ["cancel","register"]))
+        self.assertIn("cancelled",results)
+        other=[r for r in results if r!="cancelled"][0]
+        self.assertIn(other,["full","registered"])
+        self.assertTrue(Cancellation.objects.filter(student=self.ana,activity=self.activity).exists())
+        if other=="registered":
+            self.assertEqual(Registration.objects.get().student,self.bruno)
+        else:
+            self.assertEqual(Registration.objects.count(),0)

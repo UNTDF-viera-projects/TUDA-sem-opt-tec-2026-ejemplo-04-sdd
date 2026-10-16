@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.db import transaction
-from .models import Activity, Registration
+from .models import Activity, Cancellation, Registration
 
 @admin.register(Activity)
 class ActivityAdmin(admin.ModelAdmin):
@@ -14,6 +14,15 @@ class ActivityAdmin(admin.ModelAdmin):
 class RegistrationAdmin(admin.ModelAdmin):
     list_display = ["student", "activity", "created_at"]
     readonly_fields = ["student", "activity", "created_at"]
+    def has_add_permission(self, request):
+        return False
+    def has_delete_permission(self, request, obj=None):
+        return False
+
+@admin.register(Cancellation)
+class CancellationAdmin(admin.ModelAdmin):
+    list_display = ["student", "activity", "cancelled_at"]
+    readonly_fields = ["student", "activity", "cancelled_at"]
     def has_add_permission(self, request):
         return False
     def has_delete_permission(self, request, obj=None):

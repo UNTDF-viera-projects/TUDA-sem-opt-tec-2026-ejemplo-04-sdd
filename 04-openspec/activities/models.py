@@ -30,6 +30,17 @@ class Registration(models.Model):
     def __str__(self):
         return f"{self.student} — {self.activity}"
 
+class Cancellation(models.Model):
+    activity = models.ForeignKey(Activity, on_delete=models.CASCADE, related_name="cancellations")
+    student = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    cancelled_at = models.DateTimeField(auto_now_add=True)
+    class Meta:
+        constraints = [models.UniqueConstraint(fields=["student", "activity"], name="one_cancellation_per_student_activity")]
+        ordering = ["-cancelled_at", "-pk"]
+        verbose_name = "cancelación"
+    def __str__(self):
+        return f"{self.student} — {self.activity} (cancelada)"
+
 class DemoSeed(models.Model):
     key = models.CharField(max_length=40, primary_key=True)
     reference_time = models.DateTimeField()

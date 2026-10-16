@@ -1,10 +1,10 @@
-# Proposal
+# Propuesta
 
-## Why
+## Motivo
 
 Los usuarios inscriptos no pueden cancelar su inscripción. Se necesita una cancelación que libere el cupo pero impida la re-inscripción (por ahora), con ventana de 24 horas previas al inicio.
 
-## What Changes
+## Qué cambia
 
 - Nueva capacidad de cancelación de inscripción con memoria persistente (tombstone).
 - Nuevo modelo `Cancellation` (`student`, `activity`, `cancelled_at` con `auto_now_add`, unique por par, `CASCADE`).
@@ -14,19 +14,19 @@ Los usuarios inscriptos no pueden cancelar su inscripción. Se necesita una canc
 - Vistas `detail` y `mine` consultan el tombstone: el cancelado ve su fecha en lugar del botón de inscripción.
 - `mine` muestra sección de canceladas con fecha `DD/MM/YYYY` y hora `HH:mm` (24h, cero adelante, sin lugar).
 - Mensaje único parametrizado: `Ya cancelaste tu inscripción el DD/MM/YYYY a las HH:mm`, usado tanto para doble cancelación (idempotente) como para intento de re-inscripción.
-- `CancellationAdmin` read-only, igual que `RegistrationAdmin`.
+- `CancellationAdmin` de solo lectura, igual que `RegistrationAdmin`.
 
-## Capabilities
+## Capacidades
 
-### New Capabilities
+### Nuevas capacidades
 
 - `registration`: ciclo de vida de la inscripción (inscribir, cancelar con ventana de 24h, bloqueo de re-inscripción con fecha visible).
 
-### Modified Capabilities
+### Capacidades modificadas
 
 - Ninguna (no existen specs previas).
 
-## Impact
+## Impacto
 
 - Afecta: `activities/models.py`, `activities/services.py`, `activities/views.py`, `activities/urls.py`, `templates/activities/mine.html`, `templates/activities/detail.html`, `activities/admin.py`.
 - `MESSAGES` deja de ser estático para el caso de cancelación (requiere interpolación de fecha en zona `America/Argentina/Ushuaia`).
