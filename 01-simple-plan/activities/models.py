@@ -16,17 +16,22 @@ class Activity(models.Model):
     def __str__(self):
         return self.title
     def clean(self):
-        if self.pk and self.capacity < self.registrations.count():
+        confirmed = self.registrations.filter(cancelled_at__isnull=True).count()
+        if self.pk and self.capacity < confirmed:
             raise ValidationError({"capacity": "No puede reducir la capacidad por debajo de las inscripciones confirmadas."})
 
 class Registration(models.Model):
     activity = models.ForeignKey(Activity, on_delete=models.CASCADE, related_name="registrations")
     student = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
+    cancelled_at = models.DateTimeField("cancelada", blank=True, null=True)
     class Meta:
         constraints = [models.UniqueConstraint(fields=["student", "activity"], name="one_registration_per_student_activity")]
         ordering = ["-created_at", "-pk"]
         verbose_name = "inscripción"
+    @property
+    def is_cancelled(self):
+        return self.cancelled_at is not None
     def __str__(self):
         return f"{self.student} — {self.activity}"
 

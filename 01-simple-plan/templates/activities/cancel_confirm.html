@@ -1,0 +1,19 @@
+{% extends 'base.html' %}{% block content %}<a href="{% url 'mine' %}">← Mis inscripciones</a>
+<article class="card">
+    <h1>Cancelar inscripción</h1>
+    <p>Vas a cancelar tu inscripción en <strong>{{ activity.title }}</strong>.</p>
+    <dl>
+        <dt>Inicio (Ushuaia)</dt>
+        <dd>{{ activity.starts_at|date:'d/m/Y H:i' }}</dd>
+        <dt>Podés cancelar hasta</dt>
+        <dd>{{ deadline|date:'d/m/Y H:i' }}</dd>
+        <dt>Inscripción creada</dt>
+        <dd>{{ registration.created_at|date:'d/m/Y H:i' }}</dd>
+    </dl>{% if registration.is_cancelled %}<p class="badge">Cancelada el {{ registration.cancelled_at|date:'d/m/Y H:i'
+        }}.</p>
+    <p>La inscripción ya estaba cancelada; no se libera otro cupo.</p>{% elif can_cancel %}<p>La inscripción queda
+        cancelada y se libera un cupo. No se puede volver a inscribir en esta versión.</p>
+    <form method="post" action="{% url 'cancel' registration.pk %}">{% csrf_token %}<button>Confirmar
+            cancelación</button></form>{% else %}<p>El plazo venció: hacen falta {{ window_hours }} horas completas
+        antes del inicio.</p>{% endif %}<p><a href="{% url 'activity_detail' activity.pk %}">Ver actividad</a></p>
+</article>{% endblock %}

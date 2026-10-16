@@ -1,1 +1,13 @@
-{% extends 'base.html' %}{% block content %}<h1>Mis inscripciones</h1><p>Solo las inscripciones de {{ user.username }}.</p><div class="grid">{% for registration in registrations %}<article class="card"><h2>{{ registration.activity.title }}</h2><p>{{ registration.activity.starts_at|date:'d/m/Y H:i' }} · Ushuaia</p><p class="badge">Confirmada</p><a href="{% url 'activity_detail' registration.activity.pk %}">Ver actividad</a></article>{% empty %}<p>Todavía no tenés inscripciones.</p>{% endfor %}</div>{% endblock %}
+{% extends 'base.html' %}{% block content %}<h1>Mis inscripciones</h1>
+<p>Solo las inscripciones de {{ user.username }}.</p>
+<div class="grid">{% for entry in entries %}<article class="card">
+        <h2>{{ entry.registration.activity.title }}</h2>
+        <p>{{ entry.registration.activity.starts_at|date:'d/m/Y H:i' }} · Ushuaia</p>{% if
+        entry.registration.is_cancelled %}<p class="badge">Cancelada el {{ entry.registration.cancelled_at|date:'d/m/Y
+            H:i' }}</p>
+        <p>La inscripción se conserva; no ocupa cupo.</p>{% else %}<p class="badge">Confirmada</p>{% if entry.can_cancel
+        %}<p>Podés cancelar hasta el {{ entry.deadline|date:'d/m/Y H:i' }}.</p>{% endif %}{% endif %}<a
+            href="{% url 'activity_detail' entry.registration.activity.pk %}">Ver actividad</a>{% if entry.can_cancel %}
+        <form method="post" action="{% url 'cancel' entry.registration.pk %}">{% csrf_token %}<button>Cancelar
+                inscripción</button></form>{% endif %}
+    </article>{% empty %}<p>Todavía no tenés inscripciones.</p>{% endfor %}</div>{% endblock %}

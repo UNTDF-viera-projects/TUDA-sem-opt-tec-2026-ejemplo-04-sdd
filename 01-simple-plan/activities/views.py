@@ -2,10 +2,10 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
-from django.views.decorators.http import require_POST
+from django.views.decorators.http import require_http_methods, require_POST
 from .forms import RegistrationForm
 from .models import Registration
-from .services import MESSAGES, register, with_availability
+from .services import CANCELLATION_WINDOW, MESSAGES, cancel_registration, can_cancel, cancellation_deadline, register, with_availability
 
 @login_required
 def catalog(request):
@@ -28,5 +28,24 @@ def enroll(request, pk):
     return redirect("activity_detail", pk=pk)
 
 @login_required
+@require_http_methods(["GET", "POST"])
+def cancel(request, pk):
+    registration = Registration.objects.filter(pk=pk, student=request.user).select_related("activity").first()
+    if registration is None:
+        # Respuesta genérica: no distingue ajena de inexistente.
+        messages.info(request, MESSAGES["unavailable"], extra_tags="unavailable")
+        return redirect("mine")
+    if request.method == "POST":
+        # El reloj del servicio se evalúa dentro de IMMEDIATE, no en la vista.
+        result = cancel_registration(student=request.user, registration_id=pk)
+        messages.info(request, MESSAGES[result], extra_tags=result)
+        return redirect("mine")
+    now = timezone.now()  # Solo para mostrar el plazo; no decide la transición.
+    return render(request, "activities/cancel_confirm.html", {"registration": registration, "activity": registration.activity, "deadline": cancellation_deadline(registration.activity), "can_cancel": can_cancel(registration=registration, now=now), "window_hours": int(CANCELLATION_WINDOW.total_seconds() // 3600)})
+
+@login_required
 def mine(request):
-    return render(request, "activities/mine.html", {"registrations": Registration.objects.filter(student=request.user).select_related("activity")})
+    now = timezone.now()  # Un solo instante para toda la pantalla.
+    registrations = Registration.objects.filter(student=request.user).select_related("activity")
+    entries = [{"registration": registration, "deadline": cancellation_deadline(registration.activity), "can_cancel": can_cancel(registration=registration, now=now)} for registration in registrations]
+    return render(request, "activities/mine.html", {"entries": entries})
