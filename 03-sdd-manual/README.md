@@ -15,6 +15,15 @@ uv run --locked python manage.py runserver 127.0.0.1:8000
 
 Abrir http://localhost:8000/ . Cuentas ficticias: `ana`, `bruno`, `docente`; contraseña inicial `untdf-demo-2026`. Docente entra en `/admin/`. Las cuentas existentes conservan su contraseña y permisos al repetir seed. Recorrido: ingresar → catálogo → actividad → inscribirme → mis inscripciones → salir (POST). Todos los horarios se muestran en America/Argentina/Ushuaia.
 
+## Recorrido con cancelación
+
+Desde `/my-registrations/` (o el detalle de la actividad) cada inscripción confirmada dentro del plazo muestra el botón «Cancelar inscripción» (`POST activities/<id>/cancel/`); tras cancelar, la vista redirige a `/my-registrations/` con el mensaje correspondiente y la fila pasa a «Cancelada» sin botón de alta (la reinscripción no está habilitada). Fuera del plazo se muestra la regla «Cancelación disponible hasta 24 h antes del inicio», sin botón. El plazo es `inicio − 24 h` (borde inclusivo); la repetición responde «ya estaba cancelada» sin leer el reloj.
+
+Casos demostrables sin preparar datos a mano (basta `seed_demo`):
+
+1. **E-06 · deshabilitada cancelable:** ingresar como `bruno` → abrir el detalle de «Encuentro deshabilitado» (actividad deshabilitada con inscripción de Bruno) → el botón de cancelación está visible pese a `Habilitada: No` → `POST activities/<id>/cancel/` → 302 a `/my-registrations/` con «Inscripción cancelada. Se liberó un cupo.» y la tarjeta queda «Cancelada».
+2. **E-08 · plazo vencido:** ingresar como `ana` → abrir el detalle de «Actividad ya iniciada» (inscripción de Ana, inicio a −2 h) → no hay botón, solo la regla de 24 h → `POST activities/<id>/cancel/` directo responde 302 a `/my-registrations/` con «No podés cancelar: el plazo venció 24 h antes del inicio.» y la fila sigue confirmada.
+
 ```sh
 uv run --locked python manage.py test --noinput
 uv run --locked python manage.py check
@@ -35,7 +44,7 @@ docker compose stop
 docker compose start
 ```
 
-El servicio `web` sirve http://localhost:8000/ solo en loopback. Las migraciones y seed iniciales son automáticos; reconstruir o reiniciar conserva las inscripciones. El volumen `sdd-base_sqlite-data` está separado de la base local. `.venv` del host se excluye; las dependencias del contenedor viven en `/opt/venv`. El código se monta para recarga; cambiar uv.lock requiere reconstruir.
+El servicio `web` sirve http://localhost:8000/ solo en loopback. Las migraciones y seed iniciales son automáticos; reconstruir o reiniciar conserva las inscripciones. Los datos viven en `data/db.sqlite3` del repositorio mediante el bind mount `.:/app` (con `DEMO_DATA_DIR=/app/data`), no en un volumen nombrado: `stop`/`start` y `up --build` conservan el archivo. `.venv` del host se excluye; las dependencias del contenedor viven en `/opt/venv`. El código se monta para recarga; cambiar uv.lock requiere reconstruir.
 
 Para una práctica independiente, usar una **copia de código nueva**, puerto y nombre diferentes:
 
@@ -45,11 +54,23 @@ DEMO_PORT=8016 COMPOSE_PROJECT_NAME=sdd-practica docker compose up --build
 
 El puerto8016 es un ejemplo para la copia restaurada: comprobar que esté libre y elegir otro puerto y nombre de proyecto si existe otra práctica simultánea.
 
-No usar `down -v` para reinicios cotidianos. Stop/start conserva datos.
+No usar `down` para reinicios cotidianos. Stop/start conserva datos; como los datos están en el bind mount del repositorio, `down -v` tampoco los borra (no hay volumen nombrado que eliminar).
 
 ## Datos repetibles y reinicio explícito
 
-Seed crea cinco actividades: taller a +48h, clínica a +12h, laboratorio completo a +72h, deshabilitada a +96h e iniciada a −2h. Ana está en taller/clínica; Bruno en taller/laboratorio. La primera carga persiste su ancla; cargas siguientes no desplazan fechas, duplican registros ni reescriben usuarios o ediciones. Si falta una inscripción inicial y ya no se cumplen condiciones, seed informa el resultado y preserva lo existente.
+Seed crea cinco actividades: taller a +48h, clínica a +12h, laboratorio completo a +72h, deshabilitada a +96h e iniciada a −2h. Ana está en taller/clínica/iniciada; Bruno en taller/laboratorio/deshabilitada. Las dos últimas son altas directas (el servicio las rechazaría por `disabled`/`started`) con guarda de existencia por `(student, activity)`: si la fila ya existe —confirmada o cancelada— se omite y no se reescribe, así que repetir seed conserva cancelaciones. La primera carga persiste su ancla; cargas siguientes no desplazan fechas, duplican registros ni reescriben usuarios o ediciones. Si falta una inscripción inicial y ya no se cumplen condiciones, seed informa el resultado y preserva lo existente.
+
+## Resultados de cancelación
+
+`POST activities/<id>/cancel/` siempre redirige a `/my-registrations/` con una de estas claves:
+
+| Clave | Texto | Cuándo |
+| --- | --- | --- |
+| `cancelled` | `Inscripción cancelada. Se liberó un cupo.` | Confirmada dentro del plazo; guarda `cancelled_at` y libera un cupo |
+| `already_cancelled` | `Esta inscripción ya estaba cancelada.` | Repetición (antes que el plazo, sin leer el reloj); no reescribe la fecha |
+| `window_closed` | `No podés cancelar: el plazo venció 24 h antes del inicio.` | `now` posterior a `inicio − 24 h` (borde inclusivo) |
+| `not_cancellable` | `No se pudo cancelar esta inscripción.` | Genérico: ajena, inexistente o actividad borrada/inexistente (respuesta idéntica en clave, texto, estado y destino) |
+| `not_reenrollable` | `Tu inscripción fue cancelada; la reinscripción no está habilitada.` | `register()` sobre una fila cancelada (gana a `disabled`/`started`/`full`); no crea fila nueva |
 
 Para reproducir una referencia exacta en una base nueva:
 

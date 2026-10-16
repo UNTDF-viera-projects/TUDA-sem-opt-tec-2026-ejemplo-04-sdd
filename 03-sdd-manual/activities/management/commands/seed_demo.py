@@ -53,4 +53,9 @@ class Command(BaseCommand):
             result = register(student=users[username], activity_id=activity.pk, now=reference)
             if result != "registered":
                 self.stderr.write(f"No se completó {username}/{key}: {result}; datos existentes preservados.")
+        for username, key in [("bruno", "deshabilitada"), ("ana", "iniciada")]:
+            activity = activities[key]
+            if Registration.objects.filter(student=users[username], activity=activity).exists():
+                continue
+            Registration.objects.create(student=users[username], activity=activity)
         self.stdout.write(self.style.SUCCESS(f"Datos preparados. Ancla conservada: {reference.isoformat()}"))

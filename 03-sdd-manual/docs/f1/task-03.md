@@ -1,7 +1,7 @@
 # Tarea 03 · Servicios: `WINDOW`, helpers, `cancel()`, cupo filtrado, `register()`, `MESSAGES` (etapa 2)
 
-- [ ] **T03 · Implementar toda la regla de dominio en `activities/services.py`**
-- **Estado:** `en_curso`
+- [x] **T03 · Implementar toda la regla de dominio en `activities/services.py`**
+- **Estado:** `cerrada`
 
 ## Resultado concreto
 

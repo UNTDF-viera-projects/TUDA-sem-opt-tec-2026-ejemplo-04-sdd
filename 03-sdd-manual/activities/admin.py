@@ -12,8 +12,8 @@ class ActivityAdmin(admin.ModelAdmin):
 
 @admin.register(Registration)
 class RegistrationAdmin(admin.ModelAdmin):
-    list_display = ["student", "activity", "created_at"]
-    readonly_fields = ["student", "activity", "created_at"]
+    list_display = ["student", "activity", "created_at", "cancelled_at"]
+    readonly_fields = ["student", "activity", "created_at", "cancelled_at"]
     def has_add_permission(self, request):
         return False
     def has_delete_permission(self, request, obj=None):

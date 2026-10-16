@@ -1,7 +1,7 @@
 # Tarea 02 · Modelo `cancelled_at` + migración 0002 (etapa 1 del plan)
 
-- [ ] **T02 · Agregar `cancelled_at`, `is_cancelled` y piso de capacidad sobre confirmadas + migración aditiva**
-- **Estado:** `en_curso`
+- [x] **T02 · Agregar `cancelled_at`, `is_cancelled` y piso de capacidad sobre confirmadas + migración aditiva**
+- **Estado:** `cerrada`
 
 ## Resultado concreto
 
