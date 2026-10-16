@@ -1,0 +1,1 @@
+{% extends 'base.html' %}{% block content %}<section class="card narrow"><p class="eyebrow">Introducción al Desarrollo Asistido por Agentes</p><h1>Ingresar</h1><p>Usá una cuenta ficticia de la demo.</p><form method="post">{% csrf_token %}{{ form.as_p }}<input type="hidden" name="next" value="{{ next }}"><button>Iniciar sesión</button></form></section>{% endblock %}
