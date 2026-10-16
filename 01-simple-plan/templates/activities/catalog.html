@@ -1,0 +1,9 @@
+{% extends 'base.html' %}{% block content %}<p class="eyebrow">Comunidad universitaria</p>
+<h1>Actividades</h1>
+<p>Actividades habilitadas que todavía no comenzaron.</p>
+<div class="grid">{% for activity in activities %}<article class="card">
+        <h2>{{ activity.title }}</h2>
+        <p>{{ activity.starts_at|date:'d/m/Y H:i' }} · Ushuaia</p>
+        <p class="badge">{% if activity.available > 0 %}{{ activity.available }} cupos disponibles{% else %}Completa{%
+            endif %}</p><a class="button" href="{% url 'activity_detail' activity.pk %}">Ver actividad</a>
+    </article>{% empty %}<p>No hay actividades próximas habilitadas.</p>{% endfor %}</div>{% endblock %}
