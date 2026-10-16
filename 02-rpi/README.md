@@ -1,6 +1,6 @@
 # Demo de inscripciones · UNTDF
 
-Punto de partida del alumno: Django clásico, sesiones, templates y SQLite. Todas las inscripciones están confirmadas. Uso local docente, datos ficticios; no es una configuración de producción.
+Punto de partida del alumno: Django clásico, sesiones, templates y SQLite. Una inscripción activa o cancelada; la cancelación conserva la fila con su fecha. Uso local docente, datos ficticios; no es una configuración de producción.
 
 ## Arranque con uv
 
@@ -13,7 +13,11 @@ uv run --locked python manage.py seed_demo
 uv run --locked python manage.py runserver 127.0.0.1:8000
 ```
 
-Abrir http://localhost:8000/ . Cuentas ficticias: `ana`, `bruno`, `docente`; contraseña inicial `untdf-demo-2026`. Docente entra en `/admin/`. Las cuentas existentes conservan su contraseña y permisos al repetir seed. Recorrido: ingresar → catálogo → actividad → inscribirme → mis inscripciones → salir (POST). Todos los horarios se muestran en America/Argentina/Ushuaia.
+Abrir http://localhost:8000/ . Cuentas ficticias: `ana`, `bruno`, `docente`; contraseña inicial `untdf-demo-2026`. Docente entra en `/admin/`. Las cuentas existentes conservan su contraseña y permisos al repetir seed. Recorrido: ingresar → catálogo → actividad → inscribirme → mis inscripciones → cancelar (confirmación previa) → salir (POST). Todos los horarios se muestran en America/Argentina/Ushuaia.
+
+## Cancelación (F1)
+
+Solo el titular cancela, desde sus propias inscripciones y con confirmación previa. Se permite mientras falten **al menos 24 horas exactas** para el inicio, sin redondear; una actividad deshabilitada también se puede cancelar si cumple el plazo. La fila se conserva con `cancelled_at` y libera exactamente un cupo. Repetir la cancelación es un no-op que conserva la fecha original, incluso fuera del plazo. Las solicitudes ajenas o inexistentes responden igual entre sí, sin revelar datos. La reinscripción de una inscripción cancelada está fuera de alcance: se rechaza con un mensaje propio y la restricción de unicidad la impide por base de datos.
 
 ```sh
 uv run --locked python manage.py test --noinput
@@ -49,7 +53,7 @@ No usar `down -v` para reinicios cotidianos. Stop/start conserva datos.
 
 ## Datos repetibles y reinicio explícito
 
-Seed crea cinco actividades: taller a +48h, clínica a +12h, laboratorio completo a +72h, deshabilitada a +96h e iniciada a −2h. Ana está en taller/clínica; Bruno en taller/laboratorio. La primera carga persiste su ancla; cargas siguientes no desplazan fechas, duplican registros ni reescriben usuarios o ediciones. Si falta una inscripción inicial y ya no se cumplen condiciones, seed informa el resultado y preserva lo existente.
+Seed crea cinco actividades: taller a +48h, clínica a +12h, laboratorio completo a +72h, deshabilitada a +96h e iniciada a −2h. Ana está en taller/clínica; Bruno en taller/laboratorio. La primera carga persiste su ancla; cargas siguientes no desplazan fechas, duplican registros ni reescriben usuarios o ediciones. **Una cancelación sobrevive a `seed_demo`**: el seed decide por existencia de fila, y la fila cancelada sigue existiendo. Si falta una inscripción inicial y ya no se cumplen condiciones, seed informa el resultado y preserva lo existente.
 
 Para reproducir una referencia exacta en una base nueva:
 
@@ -57,7 +61,7 @@ Para reproducir una referencia exacta en una base nueva:
 uv run --locked python manage.py seed_demo --reference-time '2030-10-01T09:00:00-03:00'
 ```
 
-**Reset elimina las cinco actividades identificadas de la demo y todas sus inscripciones, incluso las creadas manualmente sobre ellas. Conserva usuarios, sus contraseñas, actividades ajenas y registros asociados a las actividades ajenas.** Recalcula el ancla para una nueva clase; el comando muestra primero la base destino y sus efectos. Sin `--confirm` no modifica nada.
+**Reset elimina las cinco actividades identificadas de la demo y todas sus inscripciones, incluso las creadas manualmente sobre ellas, y por lo tanto también sus cancelaciones.** Conserva usuarios, sus contraseñas, actividades ajenas y registros asociados a las actividades ajenas. Recalcula el ancla para una nueva clase; el comando muestra primero la base destino y sus efectos. Sin `--confirm` no modifica nada.
 
 ```sh
 uv run --locked python manage.py reset_demo --confirm
@@ -71,7 +75,7 @@ uv run --locked python manage.py reset_demo --confirm --reference-time '2030-10-
 
 Django lee variables de entorno; **no carga `.env` automáticamente**. `.env.example` es una referencia; Compose sí utiliza `.env` para sus propias variables. `DEMO_DATA_DIR` cambia la ubicación de SQLite, `DJANGO_DEBUG`/`DJANGO_SECRET_KEY` configuran Django. Hay defaults docentes para arrancar sin pasos ocultos.
 
-La disponibilidad se calcula desde registros. Las transacciones de inscripción y edición administrativa empiezan en SQLite `IMMEDIATE`; timeout 10s. Así se adquiere la reserva de escritura antes de leer el cupo. SQLite serializa escritores: es adecuado para esta demo local, no para alta carga. Un timeout devuelve `busy`, sin efecto parcial, y permite reintentar. Otros errores no se ocultan. `select_for_update()` no protege este caso en SQLite. La administración de inscripciones es de consulta, sin altas/bajas que eludan las reglas.
+La disponibilidad se calcula desde registros. Una inscripción cuenta solo si `cancelled_at IS NULL`; `Activity.active_registrations` es la definición única y la usan los tres conteos (disponibilidad, cupo de inscripción y validación de capacidad en Admin). Las transacciones de inscripción, cancelación y edición administrativa empiezan en SQLite `IMMEDIATE`; timeout 10s. Así se adquiere la reserva de escritura antes de leer el cupo. SQLite serializa escritores: es adecuado para esta demo local, no para alta carga. Un timeout devuelve `busy`, sin efecto parcial, y permite reintentar. Otros errores no se ocultan. `select_for_update()` no protege este caso en SQLite. La cancelación no borra la fila: marca la transición con un único `UPDATE ... WHERE cancelled_at IS NULL`, de modo que dos peticiones simultáneas producen una sola transición. La administración de inscripciones es de consulta, sin altas/bajas que eludan las reglas; muestra `cancelled_at` en solo lectura.
 
 ## Recuperar punto de partida
 
@@ -92,3 +96,5 @@ La exportación excluye bases SQLite, entornos, caches y secretos. Las solucione
 ## Revisión técnica del checkpoint actual
 
 La base actual (v2,22 pruebas) evalúa el reloj real de inscripción dentro de IMMEDIATE inmediatamente antes de verificar el inicio. Así, una solicitud que espera un escritor y llega a una actividad ya iniciada devuelve `started` sin ocupar cupo. El parámetro `now` conserva el reloj fijo de pruebas; los duplicados se reconocen primero. La versión anterior se preserva como `base-v1.tar.gz` para reproducir los recorridos históricos; no se reescribe su procedencia.
+
+F1 agrega cancelación: la migración `0002` solo añade `cancelled_at` nullable, sin migración de datos, y las inscripciones existentes quedan activas. La suite queda en 52 pruebas (22 heredadas sin modificar + 30 nuevas en `activities/tests/test_cancel.py`). Cada sitio de conteo usa `Activity.active_registrations`, y una prueba cruzada verifica que los tres coinciden; si alguien agrega un cuarto conteo, esa prueba avisa.

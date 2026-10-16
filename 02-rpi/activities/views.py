@@ -5,7 +5,7 @@ from django.utils import timezone
 from django.views.decorators.http import require_POST
 from .forms import RegistrationForm
 from .models import Registration
-from .services import MESSAGES, register, with_availability
+from .services import MESSAGES, can_cancel, cancel as cancel_registration, register, with_availability
 
 @login_required
 def catalog(request):
@@ -29,4 +29,19 @@ def enroll(request, pk):
 
 @login_required
 def mine(request):
-    return render(request, "activities/mine.html", {"registrations": Registration.objects.filter(student=request.user).select_related("activity")})
+    now = timezone.now()  # Un solo reloj por request: badge y botón no pueden contradecirse.
+    registrations = Registration.objects.filter(student=request.user).select_related("activity")
+    return render(request, "activities/mine.html", {"registrations": registrations, "cancelable": [r.pk for r in registrations if can_cancel(r, now=now)]})
+
+@login_required
+def cancel_confirm(request, pk):
+    # 404 para ajena e inexistente por igual: la pantalla no revela nada.
+    registration = get_object_or_404(Registration.objects.select_related("activity").filter(student=request.user), pk=pk)
+    return render(request, "activities/cancel_confirm.html", {"registration": registration, "can_cancel": can_cancel(registration)})
+
+@login_required
+@require_POST
+def cancel(request, pk):
+    result = cancel_registration(student=request.user, registration_id=pk)
+    messages.info(request, MESSAGES[result], extra_tags=result)
+    return redirect("mine")
