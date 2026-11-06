@@ -1,0 +1,1058 @@
+{
+  "fundamentos": [
+    {
+      "id": "sdd-01",
+      "title": "De prompts a especificaciones",
+      "sub": "Spec-Driven Development · UNTDF · 2026",
+      "body": "<div class=\"cover\"><p class=\"lead\">Describir un cambio.<br>Revisar sus decisiones.<br>Comprobar el resultado.</p><div class=\"cover-side\">Introducción al Desarrollo<br>Asistido por Agentes<p>Un caso: cancelación de inscripciones.</p></div></div>",
+      "note": "Presentar SDD como forma de conducir trabajo con agentes y documentos revisables. No es una propiedad de un modelo.",
+      "question": "¿Cómo sabemos que el agente resolvió la necesidad correcta?",
+      "section": "Fundamentos",
+      "state": "Objetivo de aprendizaje"
+    },
+    {
+      "id": "sdd-02",
+      "title": "Qué podremos hacer al terminar",
+      "sub": "Seguir una decisión desde el pedido hasta su evidencia.",
+      "body": "<div class=\"flow\"><article class=\"card \"><h2>Investigar</h2><p>Distinguir hechos y preguntas.</p></article><span class=\"connector\" aria-label=\"produce\">→</span><article class=\"card accent-card\"><h2>Especificar</h2><p>Acordar reglas observables.</p></article><span class=\"connector\" aria-label=\"produce\">→</span><article class=\"card \"><h2>Planificar</h2><p>Justificar una estrategia.</p></article><span class=\"connector\" aria-label=\"produce\">→</span><article class=\"card accent-card\"><h2>Verificar</h2><p>Contrastar con escenarios.</p></article></div><p class=\"caption\">El harness aporta contexto, reglas y herramientas para conducir el cambio.</p>",
+      "note": "Conectar brevemente con las clases anteriores: harness coordina contexto, reglas, herramientas y permisos. Esa infraestructura permite trabajar, pero todavía debemos acordar qué cambio queremos. Presentar cuatro resultados de aprendizaje y seguir la misma inscripción hasta su evidencia; no repetir la clase de herramientas.",
+      "question": "¿Qué evidencia conservarían para que otra persona pueda retomar el cambio?",
+      "section": "Inicio",
+      "state": "Objetivo de aprendizaje"
+    },
+    {
+      "id": "sdd-03",
+      "title": "El sistema que vamos a ampliar",
+      "sub": "Base del alumno: inscribirse y consultar sus inscripciones.",
+      "body": "<div class=\"evidence-grid\"><img src=\"../material-docente/evidencia-coordinacion/base-browser/02-catalogo.png\" alt=\"Catálogo real de la base Django con actividades y disponibilidad\"><article class=\"card accent-card\"><h2>Base verificada · PD-01</h2><p>Sesión → catálogo → detalle.<br>Inscripción confirmada.<br>Listado propio.<br>Sin cancelación F1.</p><a class=\"source\" href=\"http://localhost:8000\" target=\"_blank\">Abrir demo base ↗</a></article></div><p class=\"caption\"><a target=\"_blank\" href=\"../material-docente/evidencia-coordinacion/base-browser/resultado.json\">Resultado guardado del recorrido real ↗</a></p>",
+      "note": "PD-01. Estado inicial: base restaurada y seed_demo; cuenta ana / untdf-demo-2026. Acción: iniciar sesión, consultar catálogo/detalle, inscribirse y abrir Mis inscripciones. Resultado: inscripción propia confirmada y cupo actualizado. La captura procede del recorrido real del coordinador sobre copia limpia 8004. En clase la base usa 8000. Recuperación: README de la base, captura y resultado.json. Volver a sdd-03.",
+      "question": "¿Qué recorrido puede ejecutar hoy un estudiante y qué acción todavía no existe?",
+      "section": "Inicio",
+      "state": "Base verificada · captura real"
+    },
+    {
+      "id": "sdd-04",
+      "title": "Queremos cancelar una inscripción",
+      "sub": "El pedido expresa intención; todavía deja decisiones abiertas.",
+      "body": "<div class=\"quote\">“La plataforma permite inscribirse a actividades. Queremos incorporar la posibilidad de cancelar una inscripción.”</div><p class=\"caption\">El agente puede proponer preguntas. Las reglas deben acordarse.</p>",
+      "note": "El pedido expresa intención; todavía deja decisiones abiertas.",
+      "question": "¿Qué tendrían que decidir antes de escribir código?",
+      "section": "Pedido",
+      "state": "Decisiones del caso"
+    },
+    {
+      "id": "sdd-05",
+      "title": "Dos soluciones plausibles",
+      "sub": "Las decisiones faltantes producen comportamientos diferentes.",
+      "body": "<div class=\"columns\"><article class=\"card \"><h2>Eliminar</h2><p>Borrar el registro.<br>Recuperar el cupo.<br>Sin historial.</p></article><article class=\"card accent-card\"><h2>Conservar</h2><p>Marcar como cancelada.<br>Recuperar el cupo.<br>Guardar cuándo ocurrió.</p></article></div><p class=\"caption\">Ambas responden al pedido inicial; el negocio debe elegir.</p>",
+      "note": "No presentar una técnica como universalmente incorrecta. En nuestro caso se acuerda conservar el historial.",
+      "question": "¿Qué necesidad de negocio justificaría borrar el registro o conservarlo?",
+      "section": "Pedido",
+      "state": "Comparación hipotética"
+    },
+    {
+      "id": "sdd-06",
+      "title": "Qué falta decidir",
+      "sub": "Las preguntas anticipan efectos que después deberán probarse.",
+      "body": "<table><thead><tr><th>Pregunta</th><th>Efecto sobre el cambio</th></tr></thead><tbody><tr><td>¿Quién puede cancelar?</td><td>Titularidad y datos ajenos.</td></tr><tr><td>¿Hasta cuándo?</td><td>Frontera temporal y reloj.</td></tr><tr><td>¿Qué pasa con el cupo?</td><td>Disponibilidad observable.</td></tr><tr><td>¿Se conserva el registro?</td><td>Historial y fecha.</td></tr><tr><td>¿Y si repite la acción?</td><td>Una sola transición.</td></tr></tbody></table>",
+      "note": "Las preguntas anticipan efectos que después deberán probarse.",
+      "question": "¿Quién puede responder estas preguntas y qué pasa si el agente decide sin consultarlas?",
+      "section": "Pedido",
+      "state": "Decisiones del caso"
+    },
+    {
+      "id": "sdd-07",
+      "title": "De preguntas a decisiones",
+      "sub": "Cada respuesta debe quedar registrada y ser revisable.",
+      "body": "<table><thead><tr><th>Pregunta</th><th>Decisión acordada</th></tr></thead><tbody><tr><td>Titularidad</td><td>Solo inscripciones propias.</td></tr><tr><td>Plazo</td><td>Al menos 24 h; límite inclusivo.</td></tr><tr><td>Cupo e historial</td><td>Liberar uno y conservar el registro.</td></tr><tr><td>Repetición</td><td>Sin segundo efecto ni cambio de fecha.</td></tr></tbody></table>",
+      "note": "Mostrar el registro de preguntas y decisiones de material-docente/cancelacion. Son decisiones del caso, no inferencias de la frase inicial.",
+      "question": "¿Dónde registrarían la regla de repetición para no volver a discutirla durante la implementación?",
+      "section": "Pedido",
+      "state": "Decisiones del caso"
+    },
+    {
+      "id": "sdd-08",
+      "title": "Alcance de F1",
+      "sub": "Cancelación primero; reinscripción como extensión posterior.",
+      "body": "<div class=\"columns\"><article class=\"card \"><h2>F1 incluye</h2><p>Confirmar intención.<br>Cancelar en plazo.<br>Conservar registro y fecha.<br>Actualizar disponibilidad.</p></article><article class=\"card accent-card\"><h2>Fuera de F1</h2><p>Reinscripción F2.<br>Reembolsos y correos.<br>Lista de espera.<br>Cancelación administrativa.</p></article></div>",
+      "note": "Cancelación primero; reinscripción como extensión posterior.",
+      "question": "¿Por qué volver a inscribirse no es una tarea pendiente de cancelar?",
+      "section": "Pedido",
+      "state": "Decisiones del caso"
+    },
+    {
+      "id": "sdd-09",
+      "title": "Un prompt largo puede seguir siendo ambiguo",
+      "sub": "La diferencia está en el comportamiento verificable.",
+      "body": "<div class=\"columns\"><article class=\"card \"><h2>Borrador ambiguo</h2><p>“Cancelá de forma segura, liberá cupo cuando corresponda y manejá bien las repeticiones.”</p></article><article class=\"card accent-card\"><h2>Requisito revisado</h2><p>Al repetir una cancelación propia, informar “ya cancelada”; conservar cupos y fecha original.</p></article></div>",
+      "note": "Pedir que identifiquen expresiones sin condición observable: segura, cuando corresponda, bien.",
+      "question": "¿Podrían dos pruebas contradictorias pasar con el borrador?",
+      "section": "Pedido",
+      "state": "Decisiones del caso"
+    },
+    {
+      "id": "sdd-10",
+      "title": "Investigar el sistema real",
+      "sub": "Separar observaciones, hipótesis y preguntas.",
+      "body": "<div class=\"columns\"><article class=\"card \"><h2>Hechos observados</h2><p>Registration sin cancelación.<br>Unicidad estudiante + actividad.<br>Disponibilidad calculada.<br>Transacciones SQLite IMMEDIATE.</p></article><article class=\"card accent-card\"><h2>Referencia y pregunta</h2><p>activities/models.py y services.py.<br>¿Cómo conservar el registro?<br>¿Qué cambia al contar cupos?<br>Research registra; spec decide.</p></article></div><p class=\"caption\"><a target=\"_blank\" href=\"../material-docente/cancelacion/research.md\">Research real del checkpoint ↗</a></p>",
+      "note": "PD-02. Estado inicial: checkpoint base verificado, sin estado cancelado. Acción: abrir activities/models.py, services.py, vistas/templates y tests de la base; distinguir unicidad, cupo calculado, IMMEDIATE y sesión. Resultado esperado: hechos con referencias y preguntas para F1; no respuestas deducidas automáticamente del código. Recuperación: material-docente/cancelacion/research.md guardado y base.tar.gz. Volver sdd-10.",
+      "question": "¿Qué parte del repositorio confirma cómo se calcula la disponibilidad?",
+      "section": "RPI",
+      "state": "Base investigada · research.md"
+    },
+    {
+      "id": "sdd-11",
+      "title": "RPI: conducir el trabajo",
+      "sub": "Research–Plan–Implement es un patrón de trabajo.",
+      "body": "<div class=\"flow\"><article class=\"card \"><h2>Research</h2><p>¿Cómo funciona?<br>Hechos y preguntas.</p></article><span class=\"connector\" aria-label=\"produce\">→</span><article class=\"card accent-card\"><h2>Plan</h2><p>¿Cómo cambiarlo?<br>Estrategia y validación.</p></article><span class=\"connector\" aria-label=\"produce\">→</span><article class=\"card \"><h2>Implement</h2><p>¿Cómo ejecutarlo?<br>Código y evidencia.</p></article></div><p class=\"caption\">Verificar es necesario, aunque la sigla no lo nombre.</p>",
+      "note": "Introducir RPI aquí antes de compararlo con SDD. Verificación sigue siendo necesaria aunque no figure en la sigla.",
+      "question": "¿Qué resultado debería dejar cada etapa?",
+      "section": "RPI",
+      "state": "Concepto"
+    },
+    {
+      "id": "sdd-12",
+      "title": "Research: mirar y registrar",
+      "sub": "Investigar el repositorio antes de decidir cómo modificarlo.",
+      "body": "<div class=\"flow\"><article class=\"card \"><h2>Examinar</h2><p>Modelos, rutas,<br>templates y pruebas.</p></article><span class=\"connector\" aria-label=\"produce\">→</span><article class=\"card accent-card\"><h2>Contrastar</h2><p>Cupos, duplicados,<br>sesión y tiempos.</p></article><span class=\"connector\" aria-label=\"produce\">→</span><article class=\"card \"><h2>Guardar</h2><p>Referencias, hechos<br>y preguntas abiertas.</p></article></div>",
+      "note": "Investigar el repositorio antes de decidir cómo modificarlo.",
+      "question": "¿Qué hallazgo observado cambiaría el plan técnico sin cambiar la necesidad del negocio?",
+      "section": "RPI",
+      "state": "Concepto aplicado"
+    },
+    {
+      "id": "sdd-13",
+      "title": "Plan: elegir una estrategia",
+      "sub": "Una regla puede cumplirse mediante distintos diseños.",
+      "body": "<div class=\"columns\"><article class=\"card \"><h2>Regla de F1</h2><p>Una cancelación libera exactamente un cupo y conserva el registro.</p></article><article class=\"card accent-card\"><h2>Decisión a justificar</h2><p>Contar confirmadas y hacer una transición atómica, en vez de mantener un contador mutable separado.</p></article></div>",
+      "note": "La spec fija efectos. El plan explica responsabilidades, consistencia y tradeoffs sobre SQLite.",
+      "question": "¿Qué alternativa técnica consideraron y qué hecho permite justificar la elegida?",
+      "section": "RPI",
+      "state": "Estrategia del caso"
+    },
+    {
+      "id": "sdd-14",
+      "title": "Implement: ejecutar y comprobar",
+      "sub": "Realizar cambios acotados y contrastarlos con lo acordado.",
+      "body": "<div class=\"flow\"><article class=\"card \"><h2>Tarea</h2><p>Acción y cierre definidos.</p></article><span class=\"connector\" aria-label=\"produce\">→</span><article class=\"card accent-card\"><h2>Cambio</h2><p>Migración, servicio,<br>vista y template.</p></article><span class=\"connector\" aria-label=\"produce\">→</span><article class=\"card \"><h2>Comprobación</h2><p>Pruebas y recorrido<br>de la aplicación.</p></article></div>",
+      "note": "Realizar cambios acotados y contrastarlos con lo acordado.",
+      "question": "¿Qué prueba relaciona el cambio de código con una regla acordada?",
+      "section": "RPI",
+      "state": "Decisiones del caso"
+    },
+    {
+      "id": "sdd-15",
+      "title": "RPI y artefactos de SDD",
+      "sub": "La investigación y la especificación se refinan entre sí.",
+      "body": "<div class=\"flow\"><article class=\"card \"><h2>Research ↔ spec</h2><p>Hechos y reglas<br>revisadas.</p></article><span class=\"connector\" aria-label=\"produce\">→</span><article class=\"card accent-card\"><h2>Plan → tareas</h2><p>Decisiones y<br>trabajo ejecutable.</p></article><span class=\"connector\" aria-label=\"produce\">→</span><article class=\"card \"><h2>Implement → verificar</h2><p>Resultado y<br>evidencia.</p></article></div><p class=\"caption\">↶ Nuevos hechos: volver a spec/plan. Fallo de código: corregir implementación.</p>",
+      "note": "No imponer un orden universal: puede existir un borrador de spec antes del research. SDD aporta artefactos durables y trazabilidad.",
+      "question": "¿Qué sucede con la spec cuando research descubre una restricción que no conocíamos?",
+      "section": "RPI",
+      "state": "Decisiones del caso"
+    },
+    {
+      "id": "sdd-16",
+      "title": "Cinco conceptos, un mismo caso",
+      "sub": "Cada artefacto agrega información distinta.",
+      "body": "<table><thead><tr><th>Artefacto</th><th>Qué agrega</th><th>Quién lo revisa</th></tr></thead><tbody><tr><td>Pedido</td><td>Queremos cancelar.</td><td>Responsable de la necesidad.</td></tr><tr><td>Requisito</td><td>Solo propias; plazo inclusivo.</td><td>Negocio y desarrollo.</td></tr><tr><td>Spec</td><td>Alcance, reglas y escenarios.</td><td>Personas y agente.</td></tr><tr><td>Plan</td><td>Estrategia y razones técnicas.</td><td>Desarrollo.</td></tr><tr><td>Tarea</td><td>Acción, dependencia y cierre.</td><td>Quien ejecuta y verifica.</td></tr></tbody></table>",
+      "note": "Cada artefacto agrega información distinta.",
+      "question": "¿Cuál de estos cinco conceptos define el resultado y cuál describe cómo alcanzarlo?",
+      "section": "Artefactos",
+      "state": "Decisiones del caso"
+    },
+    {
+      "id": "sdd-17",
+      "title": "De intención a requisito",
+      "sub": "Una regla identifica sujeto, condición y resultado.",
+      "body": "<div class=\"quote small-quote\">D-F1-02 · La cancelación se permite si faltan al menos 24 horas para el inicio.</div><div class=\"flow\"><article class=\"card \"><h2>Condición</h2><p>Inscripción propia<br>confirmada.</p></article><span class=\"connector\" aria-label=\"produce\">→</span><article class=\"card accent-card\"><h2>Límite</h2><p>24 h exactas<br>se aceptan.</p></article><span class=\"connector\" aria-label=\"produce\">→</span><article class=\"card \"><h2>Resultado</h2><p>Menos de 24 h:<br>rechazo sin cambios.</p></article></div>",
+      "note": "Una regla identifica sujeto, condición y resultado.",
+      "question": "¿Cómo comprobarían esta regla sin conocer los detalles de la implementación?",
+      "section": "Artefactos",
+      "state": "Decisiones del caso"
+    },
+    {
+      "id": "sdd-18",
+      "title": "Anatomía de una especificación",
+      "sub": "Estructura y fragmento: objetivo y alcance.",
+      "body": "<div class=\"anatomy\"><aside class=\"card\"><h2>spec.md</h2><ol><li>Necesidad y alcance ←</li><li>Vocabulario</li><li>Requisitos</li><li>Escenarios</li><li>Resultados</li><li>Evolución</li></ol></aside><article class=\"document\"><pre><code>## Necesidad y alcance\n\nUn estudiante necesita cancelar su participación en una actividad. La cancelación conserva la inscripción y libera el cupo. Se extiende el sistema existente sin incorporar correos, reembolsos, lista de espera, cancelación administrativa ni auditoría general.</code></pre><p class=\"annotation\">La cancelación conserva la inscripción y libera el cupo.</p><a class=\"source\" target=\"_blank\" href=\"../material-docente/cancelacion/spec.md\">Documento completo ↗</a></article></div>",
+      "note": "Fragmento literal del documento completo enlazado; leer sección resaltada y explicar qué decisión o ambigüedad resuelve. Estructura y fragmento: objetivo y alcance.",
+      "question": "¿En qué sección encontraría el agente el alcance y en cuál una condición de aceptación?",
+      "section": "Spec",
+      "state": "Documento completo real · F1"
+    },
+    {
+      "id": "sdd-19",
+      "title": "Requisitos y restricciones",
+      "sub": "Un identificador permite seguir la regla durante el cambio.",
+      "body": "<div class=\"anatomy\"><aside class=\"card\"><h2>spec.md</h2><ol><li>Necesidad</li><li>Vocabulario</li><li>Requisitos ←</li><li>Escenarios</li><li>Resultados</li></ol></aside><article class=\"document\"><pre><code>## Requisitos\n\n[…]\n| F1-R02 / D-F1-02 | Se acepta si inicio−ahora ≥24h; igualdad acepta; menor rechaza. |</code></pre><p class=\"annotation\">F1-R02 identifica el plazo; la igualdad queda resuelta.</p><a class=\"source\" target=\"_blank\" href=\"../material-docente/cancelacion/spec.md\">Documento completo ↗</a></article></div>",
+      "note": "Fragmento literal del documento completo enlazado; leer sección resaltada y explicar qué decisión o ambigüedad resuelve. Un identificador permite seguir la regla durante el cambio.",
+      "question": "¿Las 24 horas exactas pertenecen al caso aceptado o al rechazado?",
+      "section": "Spec",
+      "state": "Documento completo real · F1"
+    },
+    {
+      "id": "sdd-19b",
+      "title": "Cupo y repetición en la spec",
+      "sub": "Dos requisitos diferentes; dos efectos observables.",
+      "body": "<div class=\"anatomy\"><aside class=\"card\"><h2>spec.md</h2><ol><li>Necesidad</li><li>Requisitos ←</li><li>Escenarios</li><li>Resultados</li></ol></aside><article class=\"document\"><pre><code>| F1-R04 / D-F1-04 | Éxito libera exactamente un cupo, visible en catálogo/detalle. |\n| F1-R05 / D-F1-05 | Repetición devuelve ya cancelada, sin cambiar fecha ni cupos y sin reevaluar plazo. |</code></pre><p class=\"annotation\">Liberar un cupo no equivale a repetir la liberación.</p><a class=\"source\" target=\"_blank\" href=\"../material-docente/cancelacion/spec.md\">Documento completo ↗</a></article></div>",
+      "note": "Fragmento literal del documento completo enlazado; leer sección resaltada y explicar qué decisión o ambigüedad resuelve. Dos requisitos diferentes; dos efectos observables.",
+      "question": "¿Qué campos y conteos deben permanecer iguales al repetir?",
+      "section": "Spec",
+      "state": "Documento completo real · F1"
+    },
+    {
+      "id": "sdd-20",
+      "title": "Escenarios observables",
+      "sub": "Condición, acción y resultado; también los rechazos.",
+      "body": "<div class=\"anatomy\"><aside class=\"card\"><h2>spec.md</h2><ol><li>Requisitos</li><li>Escenarios ←</li><li>Resultados</li><li>Evolución</li></ol></aside><article class=\"document\"><pre><code>## Escenarios de aceptación\n\n[…]\n| F1-A02 / D-SF1-02 | Propia confirmada,24h exactas | Aceptada. |\n| F1-A03 / D-SF1-03 | Propia confirmada,23h59m (y23h59m59s) | Rechazo; datos intactos. |</code></pre><p class=\"annotation\">A02 acepta el borde; A03 comprueba el rechazo sin cambios.</p><a class=\"source\" target=\"_blank\" href=\"../material-docente/cancelacion/spec.md\">Documento completo ↗</a></article></div>",
+      "note": "Fragmento literal del documento completo enlazado; leer sección resaltada y explicar qué decisión o ambigüedad resuelve. Condición, acción y resultado; también los rechazos.",
+      "question": "¿Qué dato, acción y resultado hacen reproducible cada escenario?",
+      "section": "Spec",
+      "state": "Documento completo real · F1"
+    },
+    {
+      "id": "sdd-21",
+      "title": "Criterios de aceptación",
+      "sub": "Decidir qué evidencia exige cada regla.",
+      "body": "<table><thead><tr><th>Criterio</th><th>Evidencia requerida</th></tr></thead><tbody><tr><td>Plazo inclusivo</td><td>Reloj fijo: 24 h y 24 h − 1 s.</td></tr><tr><td>Un cupo liberado</td><td>Disponibilidad antes y después.</td></tr><tr><td>Sin segundo efecto</td><td>Fecha y conteo preservados.</td></tr><tr><td>Titularidad</td><td>Otro estudiante no modifica ni ve datos.</td></tr></tbody></table>",
+      "note": "Decidir qué evidencia exige cada regla.",
+      "question": "¿Qué evidencia falta si sólo sabemos que la página devuelve HTTP 200?",
+      "section": "Spec",
+      "state": "Decisiones del caso"
+    },
+    {
+      "id": "sdd-22",
+      "title": "Revisar antes de planificar",
+      "sub": "Caso preparado para detectar omisión y ambigüedad.",
+      "body": "<div class=\"columns\"><article class=\"card \"><h2>Spec defectuosa</h2><p>“Cancelar antes de la actividad y devolver cupo.”<br><br>No define titularidad, plazo exacto ni repetición.</p></article><article class=\"card accent-card fragment\"><h2>Revisión</h2><p>Solo propias; ≥ 24 h.<br>Registro y fecha conservados.<br>Repetición sin segundo efecto.<br>Rechazo sin cambios.</p></article></div>",
+      "note": "Ejercicio preparado, no salida de una herramienta. Pedir al grupo que proponga un escenario faltante antes de mostrar la revisión.",
+      "question": "¿Qué dos implementaciones distintas permite todavía el fragmento defectuoso?",
+      "section": "Spec",
+      "state": "Ejercicio de revisión"
+    },
+    {
+      "id": "sdd-23",
+      "title": "Qué agrega un plan",
+      "sub": "Estrategia técnica basada en el sistema investigado.",
+      "body": "<div class=\"anatomy\"><aside class=\"card\"><h2>plan.md</h2><ol><li>Arquitectura y datos ←</li><li>Servicios y transacción</li><li>Interfaz y protección</li><li>Verificación</li><li>Riesgos y recuperación</li></ol></aside><article class=\"document\"><pre><code>## Arquitectura y datos\n\nTrabajar en `practicas/solucion-f1/` desde checkpoint base. Agregar Registration.status (confirmed/cancelled) y cancelled_at nullable mediante migración0002. Default confirmed preserva registros previos; conservar unique(student,activity) hasta F2.\n[…]</code></pre><p class=\"annotation\">Migrar con default confirmed conserva los registros de la base.</p><a class=\"source\" target=\"_blank\" href=\"../material-docente/cancelacion/plan.md\">Documento completo ↗</a></article></div>",
+      "note": "Fragmento literal de Arquitectura y datos hasta la conservación de unicidad, con omisión indicada. Explicar por qué F1 conserva unique(student,activity) y F2 requerirá cambiarla. El plan no es una lista de archivos: justifica preservación e impactos.",
+      "question": "¿Qué agrega esta decisión técnica que todavía no está en el requisito?",
+      "section": "Plan",
+      "state": "Documento completo real · F1"
+    },
+    {
+      "id": "sdd-24",
+      "title": "Responsabilidades del cambio",
+      "sub": "Django con templates: una regla, varias superficies.",
+      "body": "<div class=\"flow\"><article class=\"card \"><h2>Modelo</h2><p>Estado, fecha<br>y restricciones.</p></article><span class=\"connector\" aria-label=\"produce\">→</span><article class=\"card accent-card\"><h2>Servicio</h2><p>Reglas y transición<br>atómica.</p></article><span class=\"connector\" aria-label=\"produce\">→</span><article class=\"card \"><h2>Vista</h2><p>Sesión, POST,<br>CSRF y resultado.</p></article><span class=\"connector\" aria-label=\"produce\">→</span><article class=\"card accent-card\"><h2>Template</h2><p>Confirmación,<br>estado y mensaje.</p></article></div>",
+      "note": "No agregar frontend o API para enseñar F1. En la base no existe cancelación: mostrar el antes/después en su copia docente.",
+      "question": "¿Dónde se revalida el plazo si el usuario deja abierta la confirmación?",
+      "section": "Plan",
+      "state": "Arquitectura propuesta F1"
+    },
+    {
+      "id": "sdd-25",
+      "title": "Mantener consistente el cupo",
+      "sub": "Decisión técnica conectada con un resultado observable.",
+      "body": "<div class=\"columns\"><article class=\"card \"><h2>Regla F1-R04</h2><p>Una cancelación libera un cupo. Repetir no vuelve a liberarlo.</p></article><article class=\"card accent-card\"><h2>Decisión técnica</h2><p>Contar solo confirmed.<br>Leer y escribir dentro atomic con SQLite IMMEDIATE.<br>Evitar un contador separado.</p></article></div><p class=\"caption\">IMMEDIATE reserva la escritura antes de leer; SQLite serializa escritores.</p>",
+      "note": "Explicar consistencia sin afirmar que select_for_update proporciona bloqueo real en SQLite. La solución debe justificar su mecanismo.",
+      "question": "¿Qué riesgo aparece si guardamos a la vez un contador de cupo y estados de inscripción?",
+      "section": "Plan",
+      "state": "Decisiones del caso"
+    },
+    {
+      "id": "sdd-26",
+      "title": "Orden y dependencias",
+      "sub": "El orden protege la interpretación de los datos.",
+      "body": "<div class=\"flow\"><article class=\"card \"><h2>Persistencia</h2><p>Migración y<br>restricciones.</p></article><span class=\"connector\" aria-label=\"produce\">→</span><article class=\"card accent-card\"><h2>Dominio</h2><p>Resultados estables<br>y transición.</p></article><span class=\"connector\" aria-label=\"produce\">→</span><article class=\"card \"><h2>Interfaz</h2><p>Confirmación y<br>listado de estados.</p></article><span class=\"connector\" aria-label=\"produce\">→</span><article class=\"card accent-card\"><h2>Verificación</h2><p>Reglas y<br>concurrencia.</p></article></div>",
+      "note": "El orden protege la interpretación de los datos.",
+      "question": "¿Qué tarea no puede iniciarse antes de aplicar la migración?",
+      "section": "Plan",
+      "state": "Decisiones del caso"
+    },
+    {
+      "id": "sdd-27",
+      "title": "La validación también se planifica",
+      "sub": "No esperar al final para decidir qué comprobar.",
+      "body": "<div class=\"anatomy\"><aside class=\"card\"><h2>plan.md</h2><ol><li>Arquitectura</li><li>Servicios</li><li>Interfaz</li><li>Verificación ←</li><li>Riesgos</li></ol></aside><article class=\"document\"><pre><code>## Verificación\n\nMantener las22 pruebas base, incluida la corrección transversal de reloj de inscripción después de adquirir IMMEDIATE.\n[…]\nCarrera de cancelación con TransactionTestCase, SQLite en archivo y dos conexiones independientes.</code></pre><p class=\"annotation\">Reloj fijo, datos anteriores y conexiones independientes.</p><a class=\"source\" target=\"_blank\" href=\"../material-docente/cancelacion/plan.md\">Documento completo ↗</a></article></div>",
+      "note": "Fragmento literal del plan final: mantener las 22 pruebas de base y probar concurrencia con conexiones reales. La sección completa también cubre migración, fronteras temporales, titularidad, UI/CSRF y repetición. Los puntos suspensivos identifican selección; el documento completo conserva estrategia y evidencia.",
+      "question": "¿Por qué hacen falta conexiones independientes para probar concurrencia?",
+      "section": "Plan",
+      "state": "Documento completo real · F1"
+    },
+    {
+      "id": "sdd-28",
+      "title": "Anatomía de una tarea",
+      "sub": "Una tarea contiene acción, dependencia y condición de cierre.",
+      "body": "<div class=\"anatomy\"><aside class=\"card\"><h2>tasks.md</h2><ol><li>ID y acción ←</li><li>Dependencia</li><li>Evidencia / requisito</li><li>Condición de cierre</li></ol></aside><article class=\"document\"><pre><code>F1-T05 · Servicio transaccional de cancelación\nDependencia: T04\nCondición de cierre:\nEstado y titularidad se leen bajo IMMEDIATE; repetición precede al plazo; reloj normal se evalúa dentro de la reserva; ocurre una sola transición y rechazos dejan datos intactos; pasan tests R01/R02/R05/R06/R08/R09.</code></pre><p class=\"annotation\">Celdas de T05 comentadas; acción, dependencia y cierre observables.</p><a class=\"source\" target=\"_blank\" href=\"../material-docente/cancelacion/tasks.md\">Documento completo ↗</a></article></div>",
+      "note": "Tarea real F1-T05: acción de servicio, dependencia T04 y condición de cierre literal. La estructura editorial reorganiza celdas de la tabla para proyectar; no inventa un formato producido por OpenSpec o Spec Kit. T08/T09 documentan pruebas/logs; el criterio obliga a titularidad, reserva IMMEDIATE, repetición antes de plazo y única transición. Abrir tasks.md completo y contrastar cierre con CancellationTests/CancellationConcurrencyTests antes de afirmar Hecha.",
+      "question": "¿Qué evidencia permite cerrar T05 y qué tarea debe estar terminada antes?",
+      "section": "Tareas",
+      "state": "Documento completo real · F1"
+    },
+    {
+      "id": "sdd-29",
+      "title": "Dividir trabajo sin perder intención",
+      "sub": "Las dependencias describen qué debe estar listo primero.",
+      "body": "<div class=\"flow\"><article class=\"card \"><h2>F1-T04</h2><p>Estado y migración.</p></article><span class=\"connector\">→</span><article class=\"card accent-card\"><h2>F1-T05</h2><p>Servicio; depende<br>de T04.</p></article><span class=\"connector\">→</span><article class=\"card \"><h2>F1-T06</h2><p>Cupos; depende<br>de T05.</p></article><span class=\"connector\">→</span><article class=\"card accent-card\"><h2>F1-T07</h2><p>UI; depende<br>de T06.</p></article></div><p class=\"caption\">F1-T08 depende de T07: dominio, UI, migración y concurrencia.</p>",
+      "note": "Grafo resumido de tasks.md real. Mostrar desde F1-T04 persistencia hasta F1-T07 interfaz, y T08 prueba global. No son IDs hipotéticos: T06 cubre cupos y rechazo explícito F2. T09 ejecuta uv/Docker y T10 guarda checkpoint y trazabilidad.",
+      "question": "¿Qué trabajo puede avanzar en paralelo sin romper estas dependencias?",
+      "section": "Tareas",
+      "state": "Decisiones del caso"
+    },
+    {
+      "id": "sdd-30",
+      "title": "“Modificar el modelo” no alcanza",
+      "sub": "Reformular una tarea para poder revisarla.",
+      "body": "<div class=\"columns\"><article class=\"card \"><h2>Demasiado vaga</h2><p>Modificar el modelo.<br><br>Sin cambio delimitado, dependencia o evidencia de cierre.</p></article><article class=\"card accent-card\"><h2>Versión revisada</h2><p>Agregar estado y fecha de cancelación. Mantener registros existentes confirmados.<br><br>Cierre: migración y pruebas de integridad.</p></article></div>",
+      "note": "Reformular una tarea para poder revisarla.",
+      "question": "¿Qué falta en “modificar el modelo” para que otra persona sepa cuándo terminó?",
+      "section": "Tareas",
+      "state": "Ejercicio de revisión"
+    },
+    {
+      "id": "sdd-31",
+      "title": "Trazabilidad del plazo",
+      "sub": "Requisito → decisión → tarea → prueba identificable.",
+      "body": "<div class=\"step\"><article class=\"card\"><h2>F1-R02 / D-F1-02</h2><p>Igualdad acepta: inicio − ahora ≥24 h.</p><p class=\"caption\">F1-T05 · servicio; F1-T08 · pruebas</p><a class=\"source\" target=\"_blank\" href=\"../material-docente/cancelacion/trazabilidad.md\">Matriz completa ↗</a></article><article class=\"document\"><h2>Pruebas reales · activities/tests/test_f1.py</h2><pre><code>test_exactly_24_hours_accepted\ntest_one_second_under_24_rejected_intact</code></pre><p class=\"annotation\">La tarea cierra con estos resultados, no sólo con su marca.</p><a class=\"source\" target=\"_blank\" href=\"../practicas/solucion-f1/activities/tests/test_f1.py\">Código de pruebas ↗</a></article></div>",
+      "note": "PD-03. Estado inicial: spec, plan y tasks de F1 revisados junto a matriz trazabilidad.md y pruebas reales. Acción: seguir la regla de plazo inclusivo hasta decisión, tarea F1-T05/T06/T08 y funciones de test mostradas. Resultado esperado: cada eslabón tiene identificador y evidencia; una casilla no sustituye una prueba. Recuperación: documentos completos en material-docente/cancelacion y código test_f1.py de practicas/solucion-f1; logs guardados si no se ejecuta suite. Volver sdd-31.",
+      "question": "¿Qué prueba detectaría un cambio accidental de ≥24 h a >24 h?",
+      "section": "Verificación",
+      "state": "F1 implementado · trazabilidad real"
+    },
+    {
+      "id": "sdd-31b",
+      "title": "Trazabilidad de cupos",
+      "sub": "Requisito → decisión → tarea → prueba identificable.",
+      "body": "<div class=\"step\"><article class=\"card\"><h2>F1-R04 / D-F1-04</h2><p>Contar confirmed; una transición libera un cupo.</p><p class=\"caption\">F1-T06 · disponibilidad; F1-T08 · pruebas</p><a class=\"source\" target=\"_blank\" href=\"../material-docente/cancelacion/trazabilidad.md\">Matriz completa ↗</a></article><article class=\"document\"><h2>Pruebas reales · activities/tests/test_f1.py</h2><pre><code>test_full_becomes_open_for_other_student\ntest_48_hours_conserve_record_and_release_one_seat</code></pre><p class=\"annotation\">La tarea cierra con estos resultados, no sólo con su marca.</p><a class=\"source\" target=\"_blank\" href=\"../practicas/solucion-f1/activities/tests/test_f1.py\">Código de pruebas ↗</a></article></div>",
+      "note": "PD-03. Estado inicial: spec, plan y tasks de F1 revisados junto a matriz trazabilidad.md y pruebas reales. Acción: seguir la regla de cupo liberado hasta decisión, tarea F1-T05/T06/T08 y funciones de test mostradas. Resultado esperado: cada eslabón tiene identificador y evidencia; una casilla no sustituye una prueba. Recuperación: documentos completos en material-docente/cancelacion y código test_f1.py de practicas/solucion-f1; logs guardados si no se ejecuta suite. Volver sdd-31b.",
+      "question": "¿Cómo demostrarían que cancelar libera exactamente un cupo reutilizable por otro estudiante?",
+      "section": "Verificación",
+      "state": "F1 implementado · trazabilidad real"
+    },
+    {
+      "id": "sdd-31c",
+      "title": "Trazabilidad de la repetición",
+      "sub": "Requisito → decisión → tarea → prueba identificable.",
+      "body": "<div class=\"step\"><article class=\"card\"><h2>F1-R05 / D-F1-05</h2><p>Comprobar cancelada antes de comparar el plazo.</p><p class=\"caption\">F1-T05 · servicio; F1-T08 · pruebas</p><a class=\"source\" target=\"_blank\" href=\"../material-docente/cancelacion/trazabilidad.md\">Matriz completa ↗</a></article><article class=\"document\"><h2>Pruebas reales · activities/tests/test_f1.py</h2><pre><code>test_repetition_after_deadline_preserves_date\ntest_simultaneous_cancellation_unique_effect</code></pre><p class=\"annotation\">La tarea cierra con estos resultados, no sólo con su marca.</p><a class=\"source\" target=\"_blank\" href=\"../practicas/solucion-f1/activities/tests/test_f1.py\">Código de pruebas ↗</a></article></div>",
+      "note": "PD-03. Estado inicial: spec, plan y tasks de F1 revisados junto a matriz trazabilidad.md y pruebas reales. Acción: seguir la regla de repetición sin segundo efecto hasta decisión, tarea F1-T05/T06/T08 y funciones de test mostradas. Resultado esperado: cada eslabón tiene identificador y evidencia; una casilla no sustituye una prueba. Recuperación: documentos completos en material-docente/cancelacion y código test_f1.py de practicas/solucion-f1; logs guardados si no se ejecuta suite. Volver sdd-31c.",
+      "question": "¿Qué prueba detectaría que repetir una cancelación modifica su fecha original?",
+      "section": "Verificación",
+      "state": "F1 implementado · trazabilidad real"
+    },
+    {
+      "id": "sdd-32",
+      "title": "Estados y efectos de F1",
+      "sub": "Cancelar conserva el registro y cambia su participación en el cupo.",
+      "body": "<div class=\"flow\"><article class=\"card \"><h2>Confirmada</h2><p>Consume un cupo.</p></article><span class=\"connector\" aria-label=\"produce\">→</span><article class=\"card accent-card\"><h2>Cancelar en plazo</h2><p>Titular confirma<br>su intención.</p></article><span class=\"connector\" aria-label=\"produce\">→</span><article class=\"card \"><h2>Cancelada</h2><p>Registro + fecha.<br>No consume cupo.</p></article></div><p class=\"caption\">↻ Segundo intento: “ya cancelada”; sin transición ni nueva liberación.</p>",
+      "note": "Cancelar conserva el registro y cambia su participación en el cupo.",
+      "question": "¿Qué transición produce la primera cancelación y cuál produce el segundo intento?",
+      "section": "Verificación",
+      "state": "Decisiones del caso"
+    },
+    {
+      "id": "sdd-33",
+      "title": "El borde de las 24 horas",
+      "sub": "Tiempo restante = inicio − ahora; no tiempo desde la inscripción.",
+      "body": "<div class=\"timeline\" aria-label=\"Tiempo restante hasta inicio\"><div><b>48 h</b><span>Acepta</span></div><div><b>24 h exactas</b><span>Acepta · límite</span></div><div><b>24 h − 1 s</b><span>Rechaza</span></div><div><b>Inicio</b><span>0 h restante</span></div></div><p class=\"caption\">→ El reloj avanza; el tiempo restante disminuye.</p><div class=\"columns\"><article class=\"card\"><h2>Cancelación aceptada</h2><p>Registro cancelado y fecha.<br>Exactamente un cupo libre.</p></article><article class=\"card accent-card\"><h2>Cancelación rechazada</h2><p>Estado y cupo intactos.<br>Pruebas con reloj fijo y zona.</p></article></div>",
+      "note": "Tiempo restante = inicio − ahora; no tiempo desde la inscripción.",
+      "question": "¿Qué diferencia hay entre tiempo restante y tiempo transcurrido en esta línea?",
+      "section": "Verificación",
+      "state": "Decisiones del caso"
+    },
+    {
+      "id": "sdd-34",
+      "title": "Repetir una cancelación",
+      "sub": "La condición temporal no se reaplica a una inscripción ya cancelada.",
+      "body": "<div class=\"flow\"><article class=\"card \"><h2>Primera solicitud</h2><p>En plazo →<br>cancelación.</p></article><span class=\"connector\" aria-label=\"produce\">→</span><article class=\"card accent-card\"><h2>Segunda solicitud</h2><p>Incluso fuera<br>del plazo.</p></article><span class=\"connector\" aria-label=\"produce\">→</span><article class=\"card \"><h2>Resultado estable</h2><p>Ya cancelada.<br>Fecha y cupo iguales.</p></article></div>",
+      "note": "La condición temporal no se reaplica a una inscripción ya cancelada.",
+      "question": "¿Por qué la repetición después del inicio sigue devolviendo ya cancelada?",
+      "section": "Verificación",
+      "state": "Decisiones del caso"
+    },
+    {
+      "id": "sdd-35",
+      "title": "Implementar sobre una copia",
+      "sub": "La base del alumno sigue siendo el punto de partida.",
+      "body": "<div class=\"anatomy\"><aside class=\"card\"><h2>Servicio real</h2><ol><li>Migración de estado</li><li>Servicio cancel ←</li><li>Vistas POST/CSRF</li><li>Templates de estados</li><li>Pruebas</li></ol></aside><article class=\"document\"><pre><code>if registration.status == Registration.Status.CANCELLED:\n    return &quot;already_cancelled&quot;\nnow = now or timezone.now()  # Reloj real después de adquirir la reserva de escritura.\nif registration.activity.starts_at - now &lt; timedelta(hours=24):\n    return &quot;too_late&quot;</code></pre><p class=\"annotation\">Repetición antes del plazo; reloj real después de adquirir IMMEDIATE.</p><p class=\"source\"><a class=\"source\" target=\"_blank\" href=\"../practicas/solucion-f1/activities/services.py\">Documento completo ↗</a> · <a class=\"source\" href=\"http://localhost:8011\" target=\"_blank\">Demo F1 ↗</a></p></article></div>",
+      "note": "PD-04: partir del checkpoint F1 y datos reiniciados. Recuperación: copia docente y evidencia guardada. Abrir documento de cambios reales.",
+      "question": "¿Por qué se comprueba el estado cancelado antes de leer el plazo?",
+      "section": "Verificación",
+      "state": "F1 implementado · servicio y reloj reales"
+    },
+    {
+      "id": "sdd-35a",
+      "title": "Cancelar en la aplicación real",
+      "sub": "PD-04 · confirmar intención y consultar el resultado.",
+      "body": "<div class=\"evidence-grid\"><a target=\"_blank\" href=\"../material-docente/evidencia-coordinacion/f1-browser/02-confirmacion.png\"><img src=\"../material-docente/evidencia-coordinacion/f1-browser/02-confirmacion.png\" alt=\"Página real de confirmación de cancelación\"></a><article class=\"card accent-card\"><h2>Resultado observado</h2><p>Ana cancela Taller.<br>Registro y fecha conservados.<br>Cupos libres: 2 → 3.<br>Repetir mantiene 3.</p><a class=\"source\" target=\"_blank\" href=\"http://localhost:8011\">Abrir F1 ↗</a> · <a class=\"source\" target=\"_blank\" href=\"../material-docente/evidencia-coordinacion/f1-browser/resultado.json\">8 comprobaciones reales ↗</a></article></div>",
+      "note": "Estado inicial: copia docente F1, seed con cuenta ana/untdf-demo-2026, inscripción Taller confirmada. Acción: abrir confirmación y enviar formulario. Resultado real del coordinador: registro conserva ID y fecha, disponibilidad 2→3; repetir mantiene 3. Captura clickeable para verla completa. Recuperación: f1-browser/03-cancelada.png,04-disponibilidad.png,05-repeticion.png y resultado.json. El volumen Docker 8011 quedó con esta inscripción cancelada; reset explícito antes de repetir la clase. Volver sdd-35a.",
+      "question": "¿Qué vemos antes de enviar el POST y qué evidencia queda después?",
+      "section": "Verificación",
+      "state": "Captura y recorrido real · F1"
+    },
+    {
+      "id": "sdd-36",
+      "title": "Verificar lo acordado",
+      "sub": "Documentos, pruebas y aplicación deben contar la misma historia.",
+      "body": "<div class=\"anatomy\"><aside class=\"card\"><h2>Salida real · uv</h2><ol><li>22 pruebas de base</li><li>15 pruebas F1</li><li>Tiempo controlado</li><li>Migración previa</li><li>Concurrencia</li></ol></aside><article class=\"document\"><pre><code>Ran 37 tests in 3.539s\n\nOK\nFound 37 test(s).\nSystem check identified no issues (0 silenced).</code></pre><p class=\"annotation\">37 pruebas locales OK; también 37 en Docker 8011.</p><a class=\"source\" target=\"_blank\" href=\"../material-docente/cancelacion/verificacion.md\">Documento completo ↗</a></article></div>",
+      "note": "PD-05. Estado inicial: solución F1 final con 37 pruebas (22 de base y 15 F1). Abrir salida local/Docker o ejecutar desde practicas/solucion-f1; seguir plazo, repetición, migración y concurrencia hasta test_f1.py. Reloj 2030-10-01T12:00:00Z evita depender de la hora de clase. Recuperación: evidencia/f1-local-tests.txt, f1-docker-tests.txt y verificacion.md; volver a sdd-36. Los logs históricos 21/36 están preservados y no representan el paquete final.",
+      "question": "¿Qué requisito acredita cada familia de pruebas y cuál necesita además observar la interfaz?",
+      "section": "Verificación",
+      "state": "Resultado ejecutado · uv y Docker"
+    },
+    {
+      "id": "sdd-37",
+      "title": "Si no cumple, ¿a dónde volvemos?",
+      "sub": "Ejercicio: a las 24 horas exactas se produce un rechazo.",
+      "body": "<div class=\"flow\"><article class=\"card \"><h2>Spec dice ≥ 24 h</h2><p>Intención clara:<br>aceptar el límite.</p></article><span class=\"connector\" aria-label=\"produce\">→</span><article class=\"card accent-card\"><h2>Código usa &gt; 24 h</h2><p>Error de<br>implementación.</p></article><span class=\"connector\" aria-label=\"produce\">→</span><article class=\"card \"><h2>Corregir y probar</h2><p>Cambiar comparación.<br>Agregar frontera.</p></article></div><p class=\"caption\">Si la intención fuera ambigua, revisar primero la spec y sus decisiones.</p>",
+      "note": "Caso preparado, no fallo observado. Evitar caricatura de waterfall: los retornos responden a evidencia.",
+      "question": "¿Cómo distinguirían un defecto de código de una ambigüedad de spec?",
+      "section": "Verificación",
+      "state": "Ejercicio preparado"
+    },
+    {
+      "id": "sdd-37a",
+      "title": "Un hallazgo real modifica el plan",
+      "sub": "El instante de decisión debe medirse después de adquirir la reserva.",
+      "body": "<div class=\"flow\"><article class=\"card\"><h2>Hallazgo real</h2><p>El reloj leído antes de IMMEDIATE podía quedar viejo durante la espera.</p></article><span class=\"connector\">→</span><article class=\"card accent-card\"><h2>Cambio del plan</h2><p>Leer tiempo después de adquirir la reserva y comprobar repetición.</p></article><span class=\"connector\">→</span><article class=\"card\"><h2>Evidencia</h2><p>Test con reloj controlado, cruce del límite y datos intactos.</p></article></div><pre><code>test_default_clock_is_read_under_immediate_transaction</code></pre><a class=\"source\" target=\"_blank\" href=\"../material-docente/cancelacion/verificacion.md\">Revisión, corrección y resultado reales ↗</a>",
+      "note": "Hallazgo real en revisión técnica de F1: capturar tiempo antes de la reserva podía aceptar una petición que cruza 24 h durante la espera. Se actualizó plan, servicio, tareas, trazabilidad y tests; suites 35→36. La revisión posterior encontró el mismo riesgo en inscripción al cruzar inicio: corrección transversal D-B07 y prueba nueva; base final 22, F1 final 37. No cambió la intención ni se añadió F2. Contrastar OpenSpec OS17: detectó la necesidad como omisión documental antes de implementar. Evidencia y logs históricos/finales preservados en verificacion.md.",
+      "question": "¿Por qué pasa de corregir código a actualizar también plan, tareas y evidencia?",
+      "section": "Verificación",
+      "state": "Iteración real · F1 corregido y verificado"
+    },
+    {
+      "id": "sdd-38",
+      "title": "Recuperar la intención del cambio",
+      "sub": "Versionar artefactos permite retomar decisiones.",
+      "body": "<div class=\"columns\"><article class=\"card \"><h2>Qué guardar</h2><p>Pregunta y respuesta.<br>Requisito y escenario.<br>Razón técnica.<br>Prueba y resultado.</p></article><article class=\"card accent-card\"><h2>Qué reconstruir</h2><p>Qué se quería resolver.<br>Qué quedó fuera.<br>Qué cambió y por qué.<br>Qué falta comprobar.</p></article></div>",
+      "note": "Versionar artefactos permite retomar decisiones.",
+      "question": "¿Qué debería leer un nuevo agente para recuperar la razón de una decisión?",
+      "section": "Cierre",
+      "state": "Decisiones del caso"
+    },
+    {
+      "id": "sdd-39",
+      "title": "Quién decide y quién revisa",
+      "sub": "El agente propone; las personas revisan intención y evidencia.",
+      "body": "<table><thead><tr><th>Responsable</th><th>Contribución</th></tr></thead><tbody><tr><td>Negocio / docente</td><td>Alcance, reglas y aceptación.</td></tr><tr><td>Agente</td><td>Investigar, proponer, ejecutar y probar.</td></tr><tr><td>Desarrollo / estudiante</td><td>Revisar estrategia, código y resultados.</td></tr><tr><td>Entorno</td><td>Herramientas, contexto y permisos.</td></tr></tbody></table><p class=\"caption\">Plan Mode organiza trabajo; una spec guarda el comportamiento acordado.</p>",
+      "note": "No atribuir una función universal a todos los agentes. Las capacidades concretas dependen del entorno e integración.",
+      "question": "¿Qué decisión corresponde al negocio y qué propuesta técnica puede hacer el agente?",
+      "section": "Cierre",
+      "state": "Decisiones del caso"
+    },
+    {
+      "id": "sdd-40",
+      "title": "Un nuevo pedido: volver a inscribirse",
+      "sub": "F2 modifica F1; todavía no se implementa en esta entrega.",
+      "body": "<div class=\"flow\"><article class=\"card \"><h2>Historial cancelado</h2><p>Se conserva registro<br>y fecha original.</p></article><span class=\"connector\" aria-label=\"produce\">→</span><article class=\"card accent-card\"><h2>Nueva inscripción</h2><p>Se crea otra<br>confirmada.</p></article><span class=\"connector\" aria-label=\"produce\">→</span><article class=\"card \"><h2>Reglas de base</h2><p>Cupo, habilitada<br>y antes del inicio.</p></article></div><p class=\"caption\">F2 revisa unicidad: una confirmada, varias canceladas.<br>En 12 h puede inscribirse; la nueva inscripción ya no puede cancelarse.</p>",
+      "note": "F2 crea un registro nuevo y conserva el cancelado con su fecha. Cambiaría la unicidad por estudiante/actividad para admitir historial cancelado y una sola inscripción confirmada. Revisar spec, plan, tareas y pruebas antes de desarrollar. Cupo, habilitación y comienzo siguen siendo reglas de inscripción; el límite de 24 h pertenece a cancelar. Extensión conceptual pendiente, sin código F2 en esta entrega.",
+      "question": "¿Por qué F2 necesita revisar unicidad en lugar de reactivar la inscripción cancelada?",
+      "section": "Cierre",
+      "state": "Extensión conceptual F2"
+    },
+    {
+      "id": "sdd-41",
+      "title": "Conducir el cambio con preguntas",
+      "sub": "Una revisión atraviesa todo el recorrido.",
+      "body": "<table><thead><tr><th>Etapa</th><th>Pregunta de revisión</th></tr></thead><tbody><tr><td>Investigación</td><td>¿Hecho con referencia o supuesto?</td></tr><tr><td>Spec</td><td>¿Regla observable, límite y rechazo?</td></tr><tr><td>Plan</td><td>¿Decisión justificada sobre este sistema?</td></tr><tr><td>Tareas</td><td>¿Acción, dependencia y cierre?</td></tr><tr><td>Verificación</td><td>¿Evidencia suficiente de la regla?</td></tr></tbody></table>",
+      "note": "Una revisión atraviesa todo el recorrido.",
+      "question": "¿En qué etapa volverían si la evidencia contradice una decisión del plan?",
+      "section": "Cierre",
+      "state": "Decisiones del caso"
+    },
+    {
+      "id": "sdd-42",
+      "title": "OpenSpec: especificaciones y cambios",
+      "sub": "Una herramienta para organizar artefactos y evolución.",
+      "body": "<div class=\"flow\"><article class=\"card \"><h2>Sistema</h2><p>Specs de referencia.</p></article><span class=\"connector\" aria-label=\"produce\">→</span><article class=\"card accent-card\"><h2>Cambio en curso</h2><p>Propuesta, delta,<br>diseño y tareas.</p></article><span class=\"connector\" aria-label=\"produce\">→</span><article class=\"card \"><h2>Cierre</h2><p>Archivo histórico<br>y specs actualizadas.</p></article></div><p class=\"caption\"><a href=\"openspec.html\">Abrir guía de OpenSpec ↗</a></p>",
+      "note": "Una herramienta para organizar artefactos y evolución.",
+      "question": "¿Qué diferencia hay entre una especificación vigente y un delta de cambio?",
+      "section": "Cierre",
+      "state": "Panorama · ver guía de versión comprobada"
+    },
+    {
+      "id": "sdd-43",
+      "title": "Spec Kit: conducir el recorrido",
+      "sub": "Principios, feature, estrategia, tareas y revisión.",
+      "body": "<div class=\"flow\"><article class=\"card \"><h2>Principios</h2><p>Constitución<br>del proyecto.</p></article><span class=\"connector\" aria-label=\"produce\">→</span><article class=\"card accent-card\"><h2>Feature</h2><p>Spec y<br>aclaraciones.</p></article><span class=\"connector\" aria-label=\"produce\">→</span><article class=\"card \"><h2>Ejecución</h2><p>Plan, tareas,<br>análisis y evidencia.</p></article></div><p class=\"caption\"><a href=\"spec-kit.html\">Abrir guía de Spec Kit ↗</a></p>",
+      "note": "Principios, feature, estrategia, tareas y revisión.",
+      "question": "¿Qué artefacto conecta los principios del proyecto con las tareas ejecutables?",
+      "section": "Cierre",
+      "state": "Panorama · ver guía de versión comprobada"
+    },
+    {
+      "id": "sdd-44",
+      "title": "Práctica sobre la base",
+      "sub": "Desarrollar F1 sin abrir la solución docente al comenzar.",
+      "body": "<div class=\"columns\"><article class=\"card \"><h2>Consigna</h2><p>Investigar la base.<br>Acordar preguntas.<br>Escribir spec, plan y tareas.<br>Implementar y verificar.</p></article><article class=\"card accent-card\"><h2>Entregar</h2><p>Documentos coherentes.<br>Código y migración.<br>Pruebas y resultados.<br>Decisiones y limitaciones.</p></article></div><p class=\"caption\"><a target=\"_blank\" href=\"../demo-inscripciones/README.md\">Base del alumno ↗</a> · F2 queda fuera.</p>",
+      "note": "Desarrollar F1 sin abrir la solución docente al comenzar.",
+      "question": "¿Cómo comprobarán que su práctica conserva la base y no incorpora F2?",
+      "section": "Cierre",
+      "state": "Decisiones del caso"
+    },
+    {
+      "id": "sdd-45",
+      "title": "Material para retomar el recorrido",
+      "sub": "La intención se conserva junto al resultado.",
+      "body": "<div class=\"flow\"><article class=\"card \"><h2>Base</h2><p>Código y<br>recuperación.</p></article><span class=\"connector\" aria-label=\"produce\">→</span><article class=\"card accent-card\"><h2>Caso F1</h2><p>Research, spec,<br>plan y tareas.</p></article><span class=\"connector\" aria-label=\"produce\">→</span><article class=\"card \"><h2>Guías</h2><p>OpenSpec<br>y Spec Kit.</p></article></div><p class=\"caption\"><a href=\"index.html\">Índice de materiales ↗</a></p>",
+      "note": "La intención se conserva junto al resultado.",
+      "question": "¿Qué archivo abrirían para recuperar el comportamiento, la estrategia o la evidencia?",
+      "section": "Cierre",
+      "state": "Decisiones del caso"
+    }
+  ],
+  "openspec": [
+    {
+      "id": "os-01",
+      "title": "F1 con OpenSpec",
+      "sub": "Organizar un cambio concreto, implementarlo y conservar su intención.",
+      "body": "<div class=\"columns\"><article class=\"card \"><h2>Misma necesidad</h2><p>Cancelar una inscripción propia con ≥ 24 h. Conservar registro, liberar un cupo y repetir sin segundo efecto.</p></article><article class=\"card accent-card\"><h2>Recorrido</h2><p>Investigar → proponer → revisar → implementar → verificar → archivar.</p></article></div>",
+      "note": "Organizar un cambio concreto, implementarlo y conservar su intención.",
+      "question": "¿Qué criterios comunes permiten comparar este resultado con la solución docente?",
+      "section": "OpenSpec",
+      "state": "Recorrido real completo · CLI y Codex verificados"
+    },
+    {
+      "id": "os-02",
+      "title": "Una copia del mismo checkpoint",
+      "sub": "El recorrido no recibe la solución docente ya implementada.",
+      "body": "<div class=\"flow\"><article class=\"card \"><h2>Base limpia</h2><p>Mismo código<br>y datos iniciales.</p></article><span class=\"connector\" aria-label=\"produce\">→</span><article class=\"card accent-card\"><h2>Copia OpenSpec</h2><p>SQLite y puerto<br>independientes.</p></article><span class=\"connector\" aria-label=\"produce\">→</span><article class=\"card \"><h2>F1</h2><p>Artefactos propios<br>y mismo comportamiento.</p></article></div><p class=\"caption\">Origen real: base-v1.tar.gz (21 pruebas); la base del alumno final es v2 (22). <a target=\"_blank\" href=\"../material-docente/checkpoints/base-v1-manifest.json\">Manifiesto v1 ↗</a></p>",
+      "note": "PD-06: verificar manifiesto del checkpoint y restaurar sólo esta copia. No usar la base del alumno para ejecutar cambios. Origen histórico común: base-v1.tar.gz, SHA d01f06… y 21 pruebas, conservado intacto. La corrección transversal posterior produjo base v2 final de 22 pruebas; no se presenta esa base nueva como origen ya ejecutado. Confirmar puerto 8012 y proyecto Compose independiente antes de mostrar la copia. Para exponer sin agente, abrir documentos y evidencia guardada; volver a os-02.",
+      "question": "¿Cómo verificamos que las dos herramientas partieron de la misma base v1?",
+      "section": "OpenSpec",
+      "state": "Recorrido real completo · CLI y Codex verificados"
+    },
+    {
+      "id": "os-03",
+      "title": "Sistema y cambios en curso",
+      "sub": "Las especificaciones del sistema y un cambio tienen vidas distintas.",
+      "body": "<div class=\"columns\"><article class=\"card \"><h2>openspec/specs/</h2><p>Qué comportamiento rige el sistema. No aparece automáticamente por analizar todo el código.</p></article><article class=\"card accent-card\"><h2>openspec/changes/</h2><p>Propuesta y delta de F1 en curso. Al cerrar se archiva el cambio y se integra su delta.</p></article></div>",
+      "note": "Las especificaciones del sistema y un cambio tienen vidas distintas.",
+      "question": "¿Qué documento describe el sistema hoy y cuál describe lo que proponemos cambiar?",
+      "section": "OpenSpec",
+      "state": "Recorrido real completo · CLI y Codex verificados"
+    },
+    {
+      "id": "os-04",
+      "title": "Mapa de artefactos",
+      "sub": "Una ubicación reconocible para cada pregunta del cambio.",
+      "body": "<div class=\"anatomy\"><aside class=\"card\"><h2>Cambio F1</h2><ol><li>proposal.md</li><li>specs/…/spec.md</li><li>design.md</li><li>tasks.md</li></ol></aside><article class=\"document\"><pre><code>openspec/\n  specs/\n  changes/cancelar-inscripcion/\n    proposal.md\n    specs/inscripciones/spec.md\n    design.md\n    tasks.md</code></pre><p class=\"annotation\">Mapa esquemático; revisar árbol real del recorrido.</p><a class=\"source\" target=\"_blank\" href=\"../material-docente/recorridos/openspec/README.md\">Documento completo ↗</a></article></div>",
+      "note": "Una ubicación reconocible para cada pregunta del cambio.",
+      "question": "¿Dónde buscarían la razón técnica de una tarea?",
+      "section": "OpenSpec",
+      "state": "Mapa esquemático"
+    },
+    {
+      "id": "os-05",
+      "title": "Aplicación, herramienta y agente",
+      "sub": "Preparar cada capa por separado.",
+      "body": "<table><thead><tr><th>Capa</th><th>Preparación</th><th>Resultado</th></tr></thead><tbody><tr><td>Demo</td><td>uv sync --locked</td><td>Django y SQLite ejecutables.</td></tr><tr><td>OpenSpec</td><td>CLI 1.14.0; Node 24.21.0</td><td>Inicialización de integración.</td></tr><tr><td>Agente</td><td>Codex CLI 0.159.2</td><td>Skills disponibles por nombre.</td></tr></tbody></table>",
+      "note": "Instalar requiere Internet; consultar las diapositivas y documentos guardados no. Versiones verificadas por el coordinador.",
+      "question": "¿Qué dependencia pertenece a Django y cuál a la herramienta de SDD?",
+      "section": "OpenSpec",
+      "state": "Recorrido real completo · CLI y Codex verificados"
+    },
+    {
+      "id": "os-05a",
+      "title": "Instalar la versión comprobada",
+      "sub": "Terminal en sdd · primera preparación con conexión.",
+      "body": "<div class=\"step\"><article class=\"card\"><h2>Terminal</h2><pre><code>sh material-docente/recorridos/preparacion/instalar-openspec.sh\nexport PATH=/tmp/sdd-tooling/node_modules/.bin:$PATH\nexport OPENSPEC_TELEMETRY=0</code></pre><p class=\"source\">Node 24.21.0; npm; primera descarga requiere Internet</p></article><aside><article class=\"card \"><h2>Resultado</h2><p>OpenSpec 1.14.0 en una carpeta local; no instalación global.</p></article><article class=\"card accent-card\"><h2>Revisión</h2><p>Leer script y versión; luego entrar en practicas/openspec.</p></article><a class=\"source\" target=\"_blank\" href=\"../material-docente/recorridos/preparacion/instalar-openspec.sh\">Documento / evidencia completo ↗</a></aside></div>",
+      "note": "Script reproducible usado por el coordinador. Ejecutar desde sdd, revisar CLI --version y exportar PATH en esa terminal. Después cd practicas/openspec para init. Recuperación: volver a correr instalación sin borrar código ni SQLite.",
+      "question": "¿Por qué fijar la versión local antes de reproducir el recorrido?",
+      "section": "OpenSpec",
+      "state": "Instalación real · script guardado"
+    },
+    {
+      "id": "os-06",
+      "title": "Inicializar en la carpeta correcta",
+      "sub": "Terminal · dentro de la copia OpenSpec de la demo.",
+      "body": "<div class=\"step\"><article class=\"card\"><h2>Terminal</h2><pre><code>pwd\nopenspec --version\nopenspec init --tools codex \\\n  --profile core --no-animation</code></pre><p class=\"source\">Ejecutado · OpenSpec 1.14.0; 6 skills creadas</p></article><aside><article class=\"card \"><h2>Resultado</h2><p>Configuración OpenSpec y skills para Codex.</p></article><article class=\"card accent-card\"><h2>Revisar antes de continuar</h2><p>Confirmar carpeta, versión e integración antes de proponer.</p></article><a class=\"source\" target=\"_blank\" href=\"../material-docente/recorridos/openspec/01-init.txt\">Documentos y recorrido completos ↗</a></aside></div>",
+      "note": "Terminal desde practicas/openspec. Entrada exacta guardada en01-init.txt; salida real creó openspec/config.yaml y seis skills de Codex. Revisar .agents/skills antes de llamar $openspec-propose. Si skills no aparecen, reiniciar el agente desde la misma copia y comprobar init. No escribir la invocación $skill en terminal.",
+      "question": "¿Qué archivos confirma la salida real de init y cuáles todavía no genera?",
+      "section": "OpenSpec",
+      "state": "CLI ejecutada · 01-init.txt"
+    },
+    {
+      "id": "os-07",
+      "title": "Invocar capacidades del agente",
+      "sub": "Los nombres de skills no son subcomandos de terminal.",
+      "body": "<div class=\"step\"><article class=\"card\"><h2>Conversación del agente · Codex</h2><pre><code>$openspec-explore\nInvestiga modelos, inscripción, cupos\ny pruebas; registra hechos y preguntas.</code></pre><p class=\"source\">Integración generada por OpenSpec 1.14.0</p></article><aside><article class=\"card \"><h2>Resultado</h2><p>El agente lee el repositorio y entrega hallazgos.</p></article><article class=\"card accent-card\"><h2>Revisar antes de continuar</h2><p>No confundir propuesta con cambio aplicado. Guardar referencias.</p></article><a class=\"source\" target=\"_blank\" href=\"../material-docente/recorridos/openspec/README.md\">Documentos y recorrido completos ↗</a></aside></div>",
+      "note": "Los nombres de skills no son subcomandos de terminal. La diapositiva abrevia la entrada para proyectar; el registro completo enlazado conserva contexto y decisiones realmente usados. La invocación corresponde a la integración Codex verificada.",
+      "question": "¿Por qué escribir $openspec-propose en la terminal no invoca la skill del agente?",
+      "section": "OpenSpec",
+      "state": "Recorrido real completo · CLI y Codex verificados"
+    },
+    {
+      "id": "os-08",
+      "title": "Registrar la base existente",
+      "sub": "Inicializar la herramienta no infiere automáticamente todas las reglas.",
+      "body": "<div class=\"step\"><article class=\"card\"><h2>Documentos del sistema</h2><pre><code>openspec/specs/inscripciones/spec.md</code></pre></article><aside><article class=\"card \"><h2>Resultado</h2><p>Referencia de sesión, inscripción, cupos, duplicados y listado personal.</p></article><article class=\"card accent-card\"><h2>Revisar antes de continuar</h2><p>Contrastar cada afirmación con código y pruebas de la base.</p></article><a class=\"source\" target=\"_blank\" href=\"../material-docente/recorridos/openspec/artefactos/previo/openspec/specs/inscripciones/spec.md\">Documentos y recorrido completos ↗</a></aside></div>",
+      "note": "Leer el documento nativo completo enlazado y contrastar con la base y reglas F1. CLI Codex generó estos artefactos sobre copia independiente; no se presentan como los documentos genéricos del ejercicio. Inicializar la herramienta no infiere automáticamente todas las reglas.",
+      "question": "¿Quién debe contrastar la spec de base con el código existente?",
+      "section": "OpenSpec",
+      "state": "Documento nativo real · OpenSpec1.14.0"
+    },
+    {
+      "id": "os-09",
+      "title": "Explorar antes de proponer",
+      "sub": "Research conecta comportamiento actual y preguntas pendientes.",
+      "body": "<div class=\"step\"><article class=\"card\"><h2>Conversación del agente · Codex</h2><pre><code>$openspec-explore\n¿Qué condiciona la cancelación F1?\nNo implementes todavía.</code></pre><p class=\"source\">Entrada resumida · <a target=\"_blank\" href=\"../material-docente/recorridos/openspec/README.md\">registro completo ↗</a></p></article><aside><article class=\"card \"><h2>Resultado</h2><p>Registro de estado base, disponibilidad y restricciones.</p></article><article class=\"card accent-card\"><h2>Revisar antes de continuar</h2><p>Separar hechos del código y decisiones del ejercicio.</p></article><a class=\"source\" target=\"_blank\" href=\"../material-docente/recorridos/openspec/artefactos/previo/openspec/changes/cancelar-inscripcion/research.md\">Documentos y recorrido completos ↗</a></aside></div>",
+      "note": "Leer el documento nativo completo enlazado y contrastar con la base y reglas F1. CLI Codex generó estos artefactos sobre copia independiente; no se presentan como los documentos genéricos del ejercicio. Research conecta comportamiento actual y preguntas pendientes. La diapositiva abrevia la entrada para proyectar; el registro completo enlazado conserva contexto y decisiones realmente usados. La invocación corresponde a la integración Codex verificada.",
+      "question": "¿Qué hallazgo observado condiciona el diseño de cancelación?",
+      "section": "OpenSpec",
+      "state": "Documento nativo real · OpenSpec1.14.0"
+    },
+    {
+      "id": "os-10",
+      "title": "Proponer la cancelación",
+      "sub": "La entrada expresa necesidad y reglas, sin imponer archivos a modificar.",
+      "body": "<div class=\"step\"><article class=\"card\"><h2>Conversación del agente · Codex</h2><pre><code>$openspec-propose\nCrear cancelar-inscripcion: propias, ≥24 h,\nhistorial, un cupo y repetición sin efecto.\nF2 queda fuera.</code></pre><p class=\"source\">Entrada resumida · <a target=\"_blank\" href=\"../material-docente/recorridos/openspec/README.md\">registro completo ↗</a></p></article><aside><article class=\"card \"><h2>Resultado</h2><p>Propuesta, requisitos del cambio, diseño y tareas.</p></article><article class=\"card accent-card\"><h2>Revisar antes de continuar</h2><p>Leer todo lo generado: no aceptar por su sola existencia.</p></article><a class=\"source\" target=\"_blank\" href=\"../material-docente/recorridos/openspec/artefactos/previo/openspec/changes/cancelar-inscripcion/proposal.md\">Documentos y recorrido completos ↗</a></aside></div>",
+      "note": "Leer el documento nativo completo enlazado y contrastar con la base y reglas F1. CLI Codex generó estos artefactos sobre copia independiente; no se presentan como los documentos genéricos del ejercicio. La entrada expresa necesidad y reglas, sin imponer archivos a modificar. La diapositiva abrevia la entrada para proyectar; el registro completo enlazado conserva contexto y decisiones realmente usados. La invocación corresponde a la integración Codex verificada.",
+      "question": "¿Qué parte de la entrada fija negocio y qué parte debe proponer el agente?",
+      "section": "OpenSpec",
+      "state": "Documento nativo real · OpenSpec1.14.0"
+    },
+    {
+      "id": "os-11",
+      "title": "Revisar objetivo y alcance",
+      "sub": "La propuesta delimita la entrega antes de invertir en implementación.",
+      "body": "<div class=\"columns\"><article class=\"card \"><h2>Objetivo</h2><p>Permitir cancelar con las decisiones de F1. Mantener el flujo base.</p></article><article class=\"card accent-card\"><h2>Revisión de alcance</h2><p>Excluir F2 y lista de espera.<br>Confirmar titularidad y plazo.<br>Exigir fecha e historial.<br>Revisar rechazo sin cambios.</p></article></div>",
+      "note": "La propuesta delimita la entrega antes de invertir en implementación.",
+      "question": "¿Qué pedido tentador debe quedar fuera de cancelar-inscripcion?",
+      "section": "OpenSpec",
+      "state": "Recorrido real completo · CLI y Codex verificados"
+    },
+    {
+      "id": "os-12",
+      "title": "Requisitos nuevos o modificados",
+      "sub": "Formato nativo de delta: qué añade el cambio al sistema.",
+      "body": "<div class=\"anatomy\"><aside class=\"card\"><h2>Delta · spec.md</h2><ol><li>ADDED Requirements ←</li><li>Requirement</li><li>Scenario</li><li>MODIFIED Requirements</li></ol></aside><article class=\"document\"><pre><code>### Requirement: D-F1-02 Plazo inclusivo de 24 horas\nEl sistema SHALL aceptar cancelación de una inscripción propia confirmada si `starts_at - now &gt;= timedelta(hours=24)`, comparando instantes con zona horaria sin redondeo. SHALL rechazar menos de 24 horas con `too_late`, sin cambios.</code></pre><p class=\"annotation\">Delta real: regla añadida al sistema de inscripciones.</p><a class=\"source\" target=\"_blank\" href=\"../material-docente/recorridos/openspec/artefactos/previo/openspec/changes/cancelar-inscripcion/specs/inscripciones/spec.md\">Documento completo ↗</a></article></div>",
+      "note": "Leer el documento nativo completo enlazado y contrastar con la base y reglas F1. CLI Codex generó estos artefactos sobre copia independiente; no se presentan como los documentos genéricos del ejercicio. Formato nativo de delta: qué añade el cambio al sistema.",
+      "question": "¿Qué significa SHALL en este delta y qué caso exacto debemos probar?",
+      "section": "OpenSpec",
+      "state": "Documento nativo real · OpenSpec1.14.0"
+    },
+    {
+      "id": "os-13",
+      "title": "Escenarios de F1",
+      "sub": "La revisión incluye éxito, frontera, rechazo y repetición.",
+      "body": "<div class=\"anatomy\"><aside class=\"card\"><h2>Escenario nativo</h2><ol><li>Requirement</li><li>Scenario ←</li><li>WHEN</li><li>THEN</li></ol></aside><article class=\"document\"><pre><code>#### Scenario: D-SF1-02 Exactamente 24 horas\n- **WHEN** el titular cancela su inscripción confirmada y faltan exactamente 24:00:00 para el inicio\n- **THEN** recibe `cancelled` y la cancelación se conserva con su fecha</code></pre><p class=\"annotation\">WHEN/THEN fija condición y efecto verificable.</p><a class=\"source\" target=\"_blank\" href=\"../material-docente/recorridos/openspec/artefactos/previo/openspec/changes/cancelar-inscripcion/specs/inscripciones/spec.md\">Documento completo ↗</a></article></div>",
+      "note": "Leer el documento nativo completo enlazado y contrastar con la base y reglas F1. CLI Codex generó estos artefactos sobre copia independiente; no se presentan como los documentos genéricos del ejercicio. La revisión incluye éxito, frontera, rechazo y repetición.",
+      "question": "¿Qué condición de WHEN hace reproducible el resultado THEN?",
+      "section": "OpenSpec",
+      "state": "Documento nativo real · OpenSpec1.14.0"
+    },
+    {
+      "id": "os-14",
+      "title": "Diseño del cambio",
+      "sub": "La herramienta organiza; la decisión técnica requiere justificación.",
+      "body": "<div class=\"anatomy\"><aside class=\"card\"><h2>design.md</h2><ol><li>Context</li><li>Goals / Non-Goals</li><li>Decisions ←</li><li>Risks / Trade-offs</li><li>Migration Plan</li></ol></aside><article class=\"document\"><pre><code>### 1. Estado explícito y unicidad general\n\nAñadir `Registration.Status` con valores de almacenamiento `confirmed` y `cancelled` y etiquetas «Confirmada»/«Cancelada». `status` tendrá default confirmed y `cancelled_at` será nullable.\n[…]</code></pre><p class=\"annotation\">Fragmento real; el diseño justifica conservación y migración.</p><a class=\"source\" target=\"_blank\" href=\"../material-docente/recorridos/openspec/artefactos/previo/openspec/changes/cancelar-inscripcion/design.md\">Documento completo ↗</a></article></div>",
+      "note": "Leer el documento nativo completo enlazado y contrastar con la base y reglas F1. CLI Codex generó estos artefactos sobre copia independiente; no se presentan como los documentos genéricos del ejercicio. La herramienta organiza; la decisión técnica requiere justificación.",
+      "question": "¿Qué decisión evita mantener dos fuentes de verdad sobre cupos?",
+      "section": "OpenSpec",
+      "state": "Documento nativo real · OpenSpec1.14.0"
+    },
+    {
+      "id": "os-15",
+      "title": "Tareas para ejecutar",
+      "sub": "El trabajo conserva su vínculo con decisiones y escenarios.",
+      "body": "<div class=\"anatomy\"><aside class=\"card\"><h2>tasks.md</h2><ol><li>Grupo de trabajo</li><li>ID y acción ←</li><li>Dependencia</li><li>Condición de cierre</li></ol></aside><article class=\"document\"><pre><code>- [ ] 2.2 Añadir tests de titularidad ajena e inexistente, repetición dentro/fuera de plazo y después del inicio; comprobar same pk, vínculos, created_at y fecha original sin efectos adicionales. Depende de: 2.1. Cierre: not_available idéntico sin datos ajenos; already_cancelled conserva fecha y cupos en cada variante; tests pasan (D-F1-01/05/06; D-SF1-04/05).</code></pre><p class=\"annotation\">Tarea 2.2 une dependencia, regla y resultado verificable.</p><a class=\"source\" target=\"_blank\" href=\"../material-docente/recorridos/openspec/artefactos/previo/openspec/changes/cancelar-inscripcion/tasks.md\">Documento completo ↗</a></article></div>",
+      "note": "El trabajo conserva su vínculo con decisiones y escenarios.",
+      "question": "¿Qué dependencia y condición de cierre tiene la tarea 2.2?",
+      "section": "OpenSpec",
+      "state": "Tareas nativas reales · antes de apply"
+    },
+    {
+      "id": "os-16",
+      "title": "Revisar antes de implementar",
+      "sub": "Una propuesta coherente requiere contrastar varios artefactos.",
+      "body": "<table><thead><tr><th>Artefacto</th><th>Pregunta</th></tr></thead><tbody><tr><td>Propuesta</td><td>¿F1 y exclusión explícita de F2?</td></tr><tr><td>Specs</td><td>¿24 h exactas, repetición y titularidad?</td></tr><tr><td>Diseño</td><td>¿Consistencia y conservación justificadas?</td></tr><tr><td>Tareas</td><td>¿Cada regla llega a implementación y prueba?</td></tr></tbody></table>",
+      "note": "Una propuesta coherente requiere contrastar varios artefactos.",
+      "question": "¿Qué contradicción buscarían entre spec, diseño y tareas antes de aplicar?",
+      "section": "OpenSpec",
+      "state": "Recorrido real completo · CLI y Codex verificados"
+    },
+    {
+      "id": "os-17",
+      "title": "Corregir una omisión real",
+      "sub": "La revisión documental descubre una prueba temporal que falta.",
+      "body": "<div class=\"columns\"><article class=\"card \"><h2>Antes: frontera aislada</h2><p>Los tests previstos usaban now fijo y GET obsoleto.<br>Faltaba el plazo que vence mientras la petición espera IMMEDIATE.</p></article><article class=\"card accent-card\"><h2>Después: tarea 5.4</h2><p>Sostener lock real.<br>Avanzar reloj 24:00:00→23:59:59.<br>Liberar reserva y esperar too_late.<br>Inscripción y cupo intactos.</p></article></div><p class=\"caption\"><a target=\"_blank\" href=\"../material-docente/recorridos/openspec/artefactos/previo/openspec/changes/cancelar-inscripcion/revision.md\">Revisión real y snapshots antes/después ↗</a></p>",
+      "note": "Hallazgo real R-01 del agente durante planificación. Se añadió tarea 5.4 y prueba en diseño§8; tarea de documentación se renumeró 5.5 y dependencias se alinearon. Se corrigió conteo 24→25. No cambia regla de negocio: completa su verificación. Antes y después preservados en evidence. En propuesta aún no se había ejecutado; apply posterior la comprobó con test_clock_sampled_after_real_immediate_reservation y dos conexiones reales. Mostrar snapshots previos y resultado final por separado.",
+      "question": "¿Por qué un test con now fijo no demuestra qué ocurre mientras espera la reserva?",
+      "section": "OpenSpec",
+      "state": "Corrección documental real · revisión del agente"
+    },
+    {
+      "id": "os-18",
+      "title": "Implementar el cambio revisado",
+      "sub": "Skill real de Codex CLI · 25 tareas ejecutadas en la copia independiente.",
+      "body": "<div class=\"step\"><article class=\"card\"><h2>Conversación del agente · Codex</h2><pre><code>$openspec-apply-change\nImplementa cancelar-inscripcion y comprueba\nlos escenarios acordados.</code></pre><p class=\"source\">Entrada resumida · <a target=\"_blank\" href=\"../material-docente/recorridos/openspec/README.md\">registro completo ↗</a></p></article><aside><article class=\"card \"><h2>Resultado</h2><p>Código, migración histórica, templates y 25/25 tareas completas.</p></article><article class=\"card accent-card\"><h2>Revisar antes de continuar</h2><p>Revisar diff y pruebas; la checklist no es evidencia suficiente.</p></article><a class=\"source\" target=\"_blank\" href=\"../material-docente/recorridos/openspec/README.md\">Documentos y recorrido completos ↗</a></aside></div>",
+      "note": "PD-06, etapa apply. Partir del checkpoint OpenSpec preimplementación, puerto 8012/proyecto sdd-openspec y datos ficticios; no tocar base del alumno. El agente CLI recibió la skill instalada $openspec-apply-change y implementó realmente. Primer intento se detuvo por cuota antes de código; reintento autorizado completó 25 tareas, migración, servicio, consultas, UI/CSRF, tests y documentos. Registrar errores/correcciones del propio recorrido sin fingir aprobación humana. Recuperación: 03-apply-reintento.jsonl, artefactos/previo, artefactos/final y openspec-final.tar.gz; volver os18/19. Entrada de pantalla resumida, registro completo conserva contexto.",
+      "question": "¿Qué evidencia exige marcar una tarea como terminada?",
+      "section": "OpenSpec",
+      "state": "Recorrido real completo · CLI y Codex verificados"
+    },
+    {
+      "id": "os-19",
+      "title": "Verificar comportamiento y coherencia",
+      "sub": "Terminal y aplicación · misma aceptación que la solución docente.",
+      "body": "<div class=\"anatomy\"><aside class=\"card\"><h2>Resultado real</h2><ol><li>56 tests locales</li><li>56 en Docker</li><li>Migración histórica</li><li>Conexiones independientes</li><li>16 observaciones UI por entorno</li></ol></aside><article class=\"document\"><pre><code>Ran 56 tests in 5.937s\n\nOK</code></pre><p class=\"annotation\">Mismos criterios F1; pruebas propias de esta copia.</p><p class=\"source\"><a class=\"source\" target=\"_blank\" href=\"../material-docente/recorridos/openspec/artefactos/final/openspec/changes/archive/2026-10-01-cancelar-inscripcion/evidence/local-suite.stderr.txt\">Salida local completa ↗</a> · <a class=\"source\" target=\"_blank\" href=\"../material-docente/recorridos/openspec/artefactos/final/openspec/changes/archive/2026-10-01-cancelar-inscripcion/evidence/docker-suite.stderr.txt\">Salida Docker completa ↗</a></p></article></div>",
+      "note": "Verificación real local/Docker: 56 tests OK, Django check y ausencia de migraciones pendientes; migración0001→0002 conserva filas previas; concurrencia usa SQLite archivo y conexiones distintas. 16 observaciones de navegador por cada entorno complementan dominio/HTTP. Docker 8012, local temporal8014, ambos propios. Fronteras exactas y espera IMMEDIATE se comprueban con reloj controlado; número de tests no mide superioridad entre herramientas. Abrir local-suite.stderr.txt y docker-suite.stderr.txt completos; volver os19.",
+      "question": "¿Qué resultado de pruebas necesita además una comprobación visible de la aplicación?",
+      "section": "OpenSpec",
+      "state": "Recorrido real completo · CLI y Codex verificados"
+    },
+    {
+      "id": "os-19a",
+      "title": "El resultado en la aplicación real",
+      "sub": "Captura Docker8012 · complementa las pruebas con reloj controlado.",
+      "body": "<div class=\"evidence-grid\"><a target=\"_blank\" href=\"../material-docente/recorridos/openspec/artefactos/final/openspec/changes/archive/2026-10-01-cancelar-inscripcion/evidence/docker-04-cancelada.png\"><img src=\"../material-docente/recorridos/openspec/artefactos/final/openspec/changes/archive/2026-10-01-cancelar-inscripcion/evidence/docker-04-cancelada.png\" alt=\"Ana conserva su inscripción cancelada y fecha original en la implementación OpenSpec\"></a><article class=\"card accent-card\"><h2>16 observaciones por entorno</h2><p>Confirmación antes del POST.<br>Cancelada y fecha preservadas.<br>Repetición sin otro efecto.<br>Cupo y rechazo F2 observables.</p><a class=\"source\" target=\"_blank\" href=\"http://localhost:8012\">Demo OpenSpec ↗</a> · <a class=\"source\" target=\"_blank\" href=\"../material-docente/recorridos/openspec/artefactos/final/openspec/changes/archive/2026-10-01-cancelar-inscripcion/evidence/docker-ui-observations.json\">Registro Docker real ↗</a></article></div>",
+      "note": "PD-06 aplicación: iniciar sesiónAna, Taller de agentes confirmado. GET muestra consecuencia sin escritura; POST cancela y libera un cupo; repetir conserva fecha. El recorrido también verificó ajena/inexistente indistinguibles, plazo12 h rechazado, laboratorio completo→cupo liberado para nuevo alumno y persistencia. 16 observaciones por entorno documentadas; capturas permiten exponer sin agente. La hora de captura 2026es resultado previo, no supuesto del reloj actual. El volumen conserva modificaciones; reset docente explícito antes de nueva clase, después de leerREADME. Abrir imagen completa si se necesita leer detalle; volver os19a.",
+      "question": "¿Qué podemos observar en esta pantalla y qué demuestra sólo la prueba con reloj controlado?",
+      "section": "OpenSpec",
+      "state": "Captura real · Docker y código OpenSpec"
+    },
+    {
+      "id": "os-20",
+      "title": "Archivar y actualizar el sistema",
+      "sub": "Archivo ejecutado por el coordinador con la CLI nativa, después de verificar.",
+      "body": "<div class=\"step\"><article class=\"card\"><h2>Terminal · copia OpenSpec</h2><pre><code>openspec archive cancelar-inscripcion \\\n  --yes --json</code></pre><p class=\"source\">CLI 1.14.0 ejecutada · 04-archive.json</p></article><aside><article class=\"card\"><h2>Resultado real</h2><p>9 requisitos agregados.<br>6 modificados.<br>0 cambios activos.</p></article><article class=\"card accent-card\"><h2>Revisar la sincronización</h2><p>16 requisitos vigentes; los 8 escenarios de base siguen presentes.</p></article><p class=\"source\"><a class=\"source\" target=\"_blank\" href=\"../material-docente/recorridos/openspec/04-archive.json\">Archivo real ↗</a> · <a class=\"source\" target=\"_blank\" href=\"../material-docente/recorridos/openspec/04-sync-comprobacion.json\">Coherencia final ↗</a></p></aside></div>",
+      "note": "Después de tests 56 local/Docker y revisión del coordinador, se ejecutó CLI openspec archive cancelar-inscripcion --yes --json. Esta ejecución NO fue una invocación del agente externo a $openspec-archive-change, aunque esa skill está disponible en la integración. CLI sincronizó 9 ADDED/6 MODIFIED y archivó 2026-10-01-cancelar-inscripcion. El coordinador contrastó título/Purpose durable, 8 escenarios previos,15 delta requirements presentes,16 totales y0 changes activos; main strict válida con INFO de descripciones largas, sin errores. Leer04-archive.json/04-sync-comprobacion.json y spec vigente. No cerrar sólo porque se movió carpeta.",
+      "question": "¿Qué debe verificarse antes de trasladar el delta a las specs vigentes?",
+      "section": "OpenSpec",
+      "state": "Recorrido real completo · CLI y Codex verificados"
+    },
+    {
+      "id": "os-21",
+      "title": "Antes y después del cierre",
+      "sub": "El delta pasa a comportamiento vigente; el cambio queda como historia.",
+      "body": "<div class=\"columns\"><article class=\"card\"><h2>Antes: cambio en curso</h2><pre><code>openspec/\n  specs/inscripciones/spec.md\n  changes/cancelar-inscripcion/\n    proposal.md\n    specs/inscripciones/spec.md\n    design.md\n    tasks.md</code></pre></article><article class=\"card accent-card\"><h2>Después: historia conservada</h2><pre><code>openspec/\n  specs/inscripciones/spec.md\n  changes/archive/\n    2026-10-01-cancelar-inscripcion/\n      proposal.md\n      specs/inscripciones/spec.md\n      design.md\n      tasks.md</code></pre></article></div><p class=\"caption\">Árboles reales, selección de archivos. <a class=\"source\" target=\"_blank\" href=\"../material-docente/recorridos/openspec/04-sync-comprobacion.json\">Registro de cierre ↗</a></p>",
+      "note": "Árboles seleccionados de snapshots previos y finales exactos. El archivo no borra research, decisiones, revisión o evidence; se omitieron del árbol para proyectar. Specs de sistema ahora contienen F1; el delta archivado conserva la intención histórica. Cambios activos0, archive2026-10-01-cancelar-inscripcion. Abrir artefactos/final/openspec/specs/inscripciones/spec.md y seguir con os21a para ver fragmento vigente.",
+      "question": "¿Cómo sabemos que F1 pasó a referencia vigente y no quedó sólo en historia?",
+      "section": "OpenSpec",
+      "state": "Recorrido real completo · CLI y Codex verificados"
+    },
+    {
+      "id": "os-21a",
+      "title": "F1 ya pertenece a la spec vigente",
+      "sub": "Fragmento del sistema tras sincronización y archivo, no sólo del delta.",
+      "body": "<div class=\"anatomy\"><aside class=\"card\"><h2>spec vigente</h2><ol><li>16 requisitos</li><li>8 escenarios previos</li><li>F1 integrado ←</li><li>Historia archivada</li></ol></aside><article class=\"document\"><pre><code>### Requirement: D-F1-02 Plazo inclusivo de 24 horas\nEl sistema SHALL aceptar cancelación de una inscripción propia confirmada si `starts_at - now &gt;= timedelta(hours=24)`, comparando instantes con zona horaria sin redondeo. SHALL rechazar menos de 24 horas con `too_late`, sin cambios.</code></pre><p class=\"annotation\">El límite inclusivo es el mismo que se implementó y verificó.</p><a class=\"source\" target=\"_blank\" href=\"../material-docente/recorridos/openspec/artefactos/final/openspec/specs/inscripciones/spec.md\">Spec vigente completa ↗</a></article></div>",
+      "note": "Fragmento literal de spec vigente final, requisitoD-F1-02. El mismo texto del delta se integra en sistema, sin perder title/Purpose ni8 escenariosde base. Verificar sincronización más allá del movimiento de carpeta:16 requirements totales,9added/6modified y0 changes activos. Snapshots previos/finales permiten contrastar. No atribuir a init inferencia de código ni a archive validación funcional por sí solo.",
+      "question": "¿Por qué conservar tanto la spec vigente como el delta histórico que produjo este comportamiento?",
+      "section": "OpenSpec",
+      "state": "Documento vigente real · después de archivo"
+    },
+    {
+      "id": "os-22",
+      "title": "Recuperar el recorrido",
+      "sub": "Restaurar esta copia sin alterar la base ni el otro recorrido.",
+      "body": "<div class=\"columns\"><article class=\"card\"><h2>Revisar antes de aplicar</h2><pre><code>openspec-preimplementacion.tar.gz</code></pre><p>Base v1 y artefactos revisados.<br>Sin cancelación implementada.</p><a class=\"source\" target=\"_blank\" href=\"../material-docente/checkpoints/openspec-preimplementacion-manifest.json\">Manifiesto previo ↗</a></article><article class=\"card accent-card\"><h2>Mostrar el resultado</h2><pre><code>openspec-final.tar.gz</code></pre><p>56 pruebas, F1 y cambio archivado.<br>Raíz del paquete: openspec/.</p><a class=\"source\" target=\"_blank\" href=\"../material-docente/checkpoints/openspec-final-manifest.json\">Manifiesto final ↗</a></article></div><p class=\"caption\">Extraer en carpeta nueva; uv sync, migrate y seed. Confirmar 8012 / sdd-openspec. <a class=\"source\" target=\"_blank\" href=\"../material-docente/recorridos/openspec/README.md\">Recuperación completa ↗</a></p>",
+      "note": "PD-06 recuperación: elegir previo para conducir pasos y final para mostrar resultados guardados. Paquetes excluyen SQLite/env/caches/secretos; raízopenspec/. Extraer en carpeta nueva, uv sync --locked, migrate, seed_demo, check y test desde copia; confirmar8012/sdd-openspec y su volumen. El origen de ambos es base-v1 SHA d01f06…; final419330… contiene archivo y código propio. Consultar README y manifiestos antes de comandos; no sobrescribir ejercicios anteriores. Si el agente no está disponible, documentos/capturas locales permiten continuar; volver os22.",
+      "question": "¿Qué carpeta, base de datos, puerto y proyecto Compose estamos recuperando?",
+      "section": "OpenSpec",
+      "state": "Recorrido real completo · CLI y Codex verificados"
+    },
+    {
+      "id": "os-23",
+      "title": "Problemas de preparación y revisión",
+      "sub": "Dos clases de problema requieren respuestas diferentes.",
+      "body": "<div class=\"columns\"><article class=\"card\"><h2>Preparación real</h2><p>Puertos de ejercicios anteriores ocupados.<br>Se eligió8012 y proyecto sdd-openspec.<br>Confirmar aislamiento antes de iniciar.</p></article><article class=\"card accent-card\"><h2>Revisión real</h2><p>Artefactos presentes, pero faltaba probar plazo durante espera IMMEDIATE.<br>Corregir diseño§8 y tarea 5.4.<br>Verificar la prueba después de apply.</p></article></div><p class=\"caption\"><a class=\"source\" target=\"_blank\" href=\"../material-docente/recorridos/openspec/README.md\">Problemas y recuperación documentados ↗</a></p>",
+      "note": "Dos problemas reales distintos. Entorno: puertos8001/2/4/5/6 ya usados por ejemplos anteriores; se eligió8012 sin modificar proyectos previos. Artefactos: status/validate estructural no detectan cobertura temporal omitida; revisión agregó task5.4 y diseño§8, luego test real pasó. Además primer apply agotó cuota antes de código; el usuario pidió continuar y reintento completó, logs de ambos preservados. No afirmar fracaso externo permanente ni simular revisión humana. Abrir README/revision.md y comparar os17/19.",
+      "question": "¿Qué problema exige corregir entorno y cuál exige revisar artefactos?",
+      "section": "OpenSpec",
+      "state": "Recorrido real completo · CLI y Codex verificados"
+    },
+    {
+      "id": "os-24",
+      "title": "Referencia del recorrido",
+      "sub": "El mismo F1, con artefactos propios de OpenSpec.",
+      "body": "<table><thead><tr><th>Paso</th><th>Dónde</th><th>Revisar</th></tr></thead><tbody><tr><td>Inicializar</td><td>Terminal: openspec init</td><td>Integración y carpeta.</td></tr><tr><td>Proponer / aplicar</td><td>Skills de Codex</td><td>Propuesta, specs, diseño y tareas.</td></tr><tr><td>Verificar</td><td>Tests y aplicación</td><td>Aceptación y evidencia real.</td></tr><tr><td>Archivar</td><td>CLI nativa ejecutada</td><td>Specs vigentes e historial.</td></tr></tbody></table><p class=\"caption\"><a target=\"_blank\" href=\"../material-docente/recorridos/openspec/README.md\">Recorrido y documentos ↗</a> · <a href=\"spec-kit.html\">Continuar con Spec Kit ↗</a></p>",
+      "note": "Recapitulación del recorrido real: initCLI, propose/apply por skill CodexCLI, revisión de artefactos por agente/coordinador,56 tests local/Docker+16 observacionesUIcadauno, archivoCLI nativo. Skills disponibles y registro de ejecución son cosas diferentes; el README conserva método exacto y recuperación. F2 queda conceptual. Volver fundamentos o abrir SpecKit para comparar mismos criterios y formatos distintos.",
+      "question": "¿Qué documento permite reconstruir el recorrido si el agente no está disponible?",
+      "section": "OpenSpec",
+      "state": "Recorrido ejecutado · archivo CLI coordinador"
+    }
+  ],
+  "spec-kit": [
+    {
+      "id": "sk-01",
+      "title": "F1 con Spec Kit",
+      "sub": "El mismo cambio y las mismas reglas de aceptación.",
+      "body": "<div class=\"columns\"><article class=\"card \"><h2>Necesidad</h2><p>Cancelación propia con ≥ 24 h, historial, un cupo y repetición sin otro efecto.</p></article><article class=\"card accent-card\"><h2>Recorrido</h2><p>Principios → spec → aclaraciones → plan → tareas → revisión → implementación.</p></article></div>",
+      "note": "El mismo cambio y las mismas reglas de aceptación.",
+      "question": "¿Qué criterios de F1 se mantienen iguales aunque cambie el formato de los artefactos?",
+      "section": "Spec Kit",
+      "state": "Recorrido real completo · leer README y logs"
+    },
+    {
+      "id": "sk-02",
+      "title": "Otra copia de la base",
+      "sub": "Código, datos y requisitos iguales; entorno independiente.",
+      "body": "<div class=\"flow\"><article class=\"card \"><h2>Checkpoint base</h2><p>Sin cancelación.</p></article><span class=\"connector\" aria-label=\"produce\">→</span><article class=\"card accent-card\"><h2>Copia Spec Kit</h2><p>SQLite y puerto<br>independientes.</p></article><span class=\"connector\" aria-label=\"produce\">→</span><article class=\"card \"><h2>Resultado F1</h2><p>Comparar misma<br>aceptación.</p></article></div><p class=\"caption\">Origen real: base-v1.tar.gz (21 pruebas); la base del alumno final es v2 (22). <a target=\"_blank\" href=\"../material-docente/checkpoints/base-v1-manifest.json\">Manifiesto v1 ↗</a></p>",
+      "note": "PD-07: partir del mismo checkpoint que OpenSpec y verificar manifiesto antes de implementar. Origen histórico común: base-v1.tar.gz, SHA d01f06… y 21 pruebas, conservado intacto. La corrección transversal posterior produjo base v2 final de 22 pruebas; no se presenta esa base nueva como origen ya ejecutado. Confirmar puerto 8013 y proyecto Compose independiente antes de mostrar la copia. Para exponer sin agente, abrir documentos y evidencia guardada; volver a sk-02.",
+      "question": "¿Qué manifiesto demuestra el origen común con OpenSpec?",
+      "section": "Spec Kit",
+      "state": "Recorrido real completo · leer README y logs"
+    },
+    {
+      "id": "sk-03",
+      "title": "Mapa del recorrido",
+      "sub": "Cada etapa produce contexto para la siguiente revisión.",
+      "body": "<div class=\"flow\"><article class=\"card \"><h2>Principios + spec</h2><p>Qué orienta al proyecto<br>y qué debe ocurrir.</p></article><span class=\"connector\" aria-label=\"produce\">→</span><article class=\"card accent-card\"><h2>Plan + tareas</h2><p>Cómo cambiarlo<br>y qué ejecutar.</p></article><span class=\"connector\" aria-label=\"produce\">→</span><article class=\"card \"><h2>Análisis + evidencia</h2><p>Coherencia y<br>cumplimiento.</p></article></div><p class=\"caption\">↶ Aclarar intención antes de construir decisiones técnicas encima.</p>",
+      "note": "Cada etapa produce contexto para la siguiente revisión.",
+      "question": "¿Qué producto deja cada etapa y a dónde volvemos si falla la verificación?",
+      "section": "Spec Kit",
+      "state": "Recorrido real completo · leer README y logs"
+    },
+    {
+      "id": "sk-04",
+      "title": "Preparar las tres capas",
+      "sub": "La app puede funcionar sin instalar Spec Kit.",
+      "body": "<table><thead><tr><th>Capa</th><th>Entorno comprobado</th></tr></thead><tbody><tr><td>Aplicación</td><td>Django, SQLite, uv y Docker de la base.</td></tr><tr><td>Herramienta</td><td>Spec Kit 1.0.14.dev0; commit 838f1184…</td></tr><tr><td>Integración</td><td>Codex 0.159.2 con skills, no slash universal.</td></tr><tr><td>Conexión</td><td>Preparar herramientas requiere acceso externo.</td></tr></tbody></table>",
+      "note": "Commit completo: 838f1184d1b2ed254a99e8b818dbc23aa80a7f1f. No interpretar dev0 como release estable.",
+      "question": "¿Qué versión e integración explican las invocaciones que veremos?",
+      "section": "Spec Kit",
+      "state": "Recorrido real completo · leer README y logs"
+    },
+    {
+      "id": "sk-04a",
+      "title": "Usar Spec Kit con commit fijado",
+      "sub": "Terminal en sdd · script reproducible de preparación.",
+      "body": "<div class=\"step\"><article class=\"card\"><h2>Terminal</h2><pre><code>sh material-docente/recorridos/preparacion/specify.sh version\ncd practicas/spec-kit</code></pre><p class=\"source\">Python 3.12.14; uv 0.12.19; specify 1.0.14.dev0</p></article><aside><article class=\"card \"><h2>Resultado</h2><p>uvx resuelve specify desde el commit838f1184… fijado.</p></article><article class=\"card accent-card\"><h2>Revisión</h2><p>Primera preparación requiere conexión; no usar latest para repetir esta clase.</p></article><a class=\"source\" target=\"_blank\" href=\"../material-docente/recorridos/preparacion/specify.sh\">Documento / evidencia completo ↗</a></aside></div>",
+      "note": "El wrapper specify.sh contiene el commit completo 838f1184d1b2ed254a99e8b818dbc23aa80a7f1f. Ejecutar desde sdd para versión; luego entrar en practicas/spec-kit. La siguiente diapositiva emplea el mismo wrapper desde esa copia.",
+      "question": "¿Por qué fijamos un commit además del nombre de la herramienta?",
+      "section": "Spec Kit",
+      "state": "Instalación real · script guardado"
+    },
+    {
+      "id": "sk-05",
+      "title": "Inicializar el proyecto",
+      "sub": "Terminal · dentro de la copia Spec Kit.",
+      "body": "<div class=\"step\"><article class=\"card\"><h2>Terminal · practicas/spec-kit</h2><pre><code>SDD_SPECIFY=../../material-docente/recorridos/preparacion/specify.sh\nsh &quot;$SDD_SPECIFY&quot; init --here --force \\\n  --non-interactive --integration codex \\\n  --integration-options=--skills --script sh</code></pre><p class=\"source\">Salida real: integración Codex con skills</p></article><aside><article class=\"card \"><h2>Resultado</h2><p>Constitución, templates, scripts y skills para Codex.</p></article><article class=\"card accent-card\"><h2>Revisión</h2><p>Confirmar carpeta independiente; --force sólo en esta copia.</p></article><a class=\"source\" target=\"_blank\" href=\"../material-docente/recorridos/spec-kit/init.txt\">Documento / evidencia completo ↗</a></aside></div>",
+      "note": "Terminal · dentro de la copia Spec Kit.",
+      "question": "¿Qué estructura creó specify init y qué contenido todavía no está decidido?",
+      "section": "Spec Kit",
+      "state": "CLI ejecutada · init.txt"
+    },
+    {
+      "id": "sk-06",
+      "title": "Invocar desde el lugar correcto",
+      "sub": "Las capacidades se llaman en la conversación de Codex.",
+      "body": "<div class=\"step\"><article class=\"card\"><h2>Conversación del agente · Codex</h2><pre><code>$speckit-constitution\nDefine principios para esta demo\nDjango y el desarrollo de F1.</code></pre><p class=\"source\">Entrada resumida · <a target=\"_blank\" href=\"../material-docente/recorridos/spec-kit/entradas.md\">registro completo ↗</a></p></article><aside><article class=\"card \"><h2>Resultado</h2><p>El agente utiliza su skill instalada, no un subcomando specify.</p></article><article class=\"card accent-card\"><h2>Revisar antes de continuar</h2><p>Confirmar que skills y scripts corresponden al commit fijado.</p></article><a class=\"source\" target=\"_blank\" href=\"../material-docente/recorridos/spec-kit/README.md\">Documentos y recorrido completos ↗</a></aside></div>",
+      "note": "Las capacidades se llaman en la conversación de Codex. La diapositiva abrevia la entrada para proyectar; el registro completo enlazado conserva contexto y decisiones realmente usados. La invocación corresponde a la integración Codex verificada.",
+      "question": "¿Qué diferencia hay entre specify init y $speckit-specify?",
+      "section": "Spec Kit",
+      "state": "Recorrido real completo · leer README y logs"
+    },
+    {
+      "id": "sk-07",
+      "title": "Constitución: principios del proyecto",
+      "sub": "Orientar decisiones comunes antes de diseñar una feature.",
+      "body": "<div class=\"anatomy\"><aside class=\"card\"><h2>constitution.md</h2><ol><li>Core Principles ←</li><li>Teaching Constraints</li><li>Workflow</li><li>Governance</li></ol></aside><article class=\"document\"><pre><code>### II. Datos e historial preservados\nLas migraciones MUST conservar las inscripciones previas. Una cancelación MUST conservar\nel registro, propietario, actividad y la fecha original de cancelación. Seed MUST ser\nidempotente; reinicio explícito MUST limitar sus efectos a datos ficticios identificados.</code></pre><p class=\"annotation\">Este principio condiciona migración, historial y seed.</p><a class=\"source\" target=\"_blank\" href=\"../material-docente/recorridos/spec-kit/artefactos/constitution.md\">Documento completo ↗</a></article></div>",
+      "note": "Método real: agente de esta ejecución leyó y aplicó skills instaladas; CLI y scripts nativos se ejecutaron con logs. No se afirma invocación slash en UI. Orientar decisiones comunes antes de diseñar una feature.",
+      "question": "¿Qué decisión concreta obliga a preservar datos e historial?",
+      "section": "Spec Kit",
+      "state": "Artefacto nativo real · Spec Kit commit fijado"
+    },
+    {
+      "id": "sk-08",
+      "title": "Principios aplicados a la demo",
+      "sub": "Un principio es útil si permite revisar una decisión.",
+      "body": "<table><thead><tr><th>Principio</th><th>Decisión observable</th></tr></thead><tbody><tr><td>Django clásico</td><td>Vista y template; sin API agregada.</td></tr><tr><td>Preservación de datos</td><td>Estado cancelado y fecha; no borrar.</td></tr><tr><td>Consistencia</td><td>Una transición y cupo calculado.</td></tr><tr><td>Verificación reproducible</td><td>Frontera con reloj controlado.</td></tr></tbody></table>",
+      "note": "Un principio es útil si permite revisar una decisión.",
+      "question": "¿Cómo condiciona Django clásico el plan sin convertirse en una regla del negocio?",
+      "section": "Spec Kit",
+      "state": "Recorrido real completo · leer README y logs"
+    },
+    {
+      "id": "sk-09",
+      "title": "Especificar el cambio",
+      "sub": "Entrada de negocio: comportamiento, alcance y restricciones.",
+      "body": "<div class=\"step\"><article class=\"card\"><h2>Conversación del agente · Codex</h2><pre><code>$speckit-specify\nCancelar inscripciones propias, ≥24 h,\nconservar registro, liberar un cupo.\nRepetición sin otro efecto; F2 fuera.</code></pre><p class=\"source\">Entrada resumida · <a target=\"_blank\" href=\"../material-docente/recorridos/spec-kit/entradas.md\">registro completo ↗</a></p></article><aside><article class=\"card \"><h2>Resultado</h2><p>Spec de feature con historias, requisitos y criterios.</p></article><article class=\"card accent-card\"><h2>Revisar antes de continuar</h2><p>Revisar que la entrada no sustituya decisiones técnicas del plan.</p></article><a class=\"source\" target=\"_blank\" href=\"../material-docente/recorridos/spec-kit/README.md\">Documentos y recorrido completos ↗</a></aside></div>",
+      "note": "Entrada de negocio: comportamiento, alcance y restricciones. La diapositiva abrevia la entrada para proyectar; el registro completo enlazado conserva contexto y decisiones realmente usados. La invocación corresponde a la integración Codex verificada.",
+      "question": "¿Qué información de F1 debe incluir la entrada para no delegar decisiones del negocio?",
+      "section": "Spec Kit",
+      "state": "Recorrido real completo · leer README y logs"
+    },
+    {
+      "id": "sk-10",
+      "title": "Leer la especificación generada",
+      "sub": "Formato nativo: historias, requisitos y éxito medible.",
+      "body": "<div class=\"anatomy\"><aside class=\"card\"><h2>spec.md</h2><ol><li>User Scenarios &amp; Testing</li><li>Requirements ←</li><li>Success Criteria</li><li>Assumptions</li></ol></aside><article class=\"document\"><pre><code>### Functional Requirements\n\n[…]\n- **FR-002**: Una confirmada MUST admitir cancelación con tiempo restante ≥24 h; &lt;24 h MUST rechazarse (D-F1-02).</code></pre><p class=\"annotation\">FR-002 expresa el borde inclusivo en el formato nativo.</p><a class=\"source\" target=\"_blank\" href=\"../material-docente/recorridos/spec-kit/artefactos/001-cancelacion/spec.md\">Documento completo ↗</a></article></div>",
+      "note": "Método real: agente de esta ejecución leyó y aplicó skills instaladas; CLI y scripts nativos se ejecutaron con logs. No se afirma invocación slash en UI. Formato nativo: historias, requisitos y éxito medible.",
+      "question": "¿Qué relación hay entre una historia, FR-002 y su criterio de éxito?",
+      "section": "Spec Kit",
+      "state": "Artefacto nativo real · Spec Kit commit fijado"
+    },
+    {
+      "id": "sk-11",
+      "title": "Detectar lo que sigue ambiguo",
+      "sub": "Aclarar antes de planificar evita consolidar supuestos.",
+      "body": "<div class=\"columns\"><article class=\"card \"><h2>Preguntas</h2><p>¿Qué ocurre a las 24 h?<br>¿Se elimina el registro?<br>¿Repetir vuelve a evaluar plazo?<br>¿Se puede reinscribir?</p></article><article class=\"card accent-card\"><h2>Respuestas de F1</h2><p>Límite inclusivo.<br>Registro y fecha conservados.<br>Repetición sin cambios.<br>F2 queda fuera.</p></article></div>",
+      "note": "Aclarar antes de planificar evita consolidar supuestos.",
+      "question": "¿Qué ambigüedad existiría si no se hubiera fijado repetición fuera de plazo?",
+      "section": "Spec Kit",
+      "state": "Recorrido real completo · leer README y logs"
+    },
+    {
+      "id": "sk-12",
+      "title": "Aclarar y guardar decisiones",
+      "sub": "Skill opcional elegida para resolver preguntas de este caso.",
+      "body": "<div class=\"step\"><article class=\"card\"><h2>Conversación del agente · Codex</h2><pre><code>$speckit-clarify\nRevisa decisiones de F1 ya acordadas.</code></pre><p class=\"source\">Revisión real; ninguna ambigüedad crítica pendiente</p></article><aside><article class=\"card \"><h2>Resultado</h2><p>0 preguntas nuevas: las specs del usuario resuelven las reglas.</p></article><article class=\"card accent-card\"><h2>Revisión</h2><p>No inventar respuestas humanas ni pedir decisiones ya provistas.</p></article><a class=\"source\" target=\"_blank\" href=\"../material-docente/recorridos/spec-kit/clarify.md\">Documento / evidencia completo ↗</a></aside></div>",
+      "note": "Método real: agente de esta ejecución leyó y aplicó skills instaladas; CLI y scripts nativos se ejecutaron con logs. No se afirma invocación slash en UI. Clarify real aplicó check-prerequisites y revisión de cobertura. Resultado 0 nuevas preguntas porque el usuario ya fijó todas las reglas. No se simula una conversación de aclaraciones. Sigue plan técnico. La diapositiva abrevia la entrada para proyectar; el registro completo enlazado conserva contexto y decisiones realmente usados. La invocación corresponde a la integración Codex verificada.",
+      "question": "¿Por qué la revisión de claridad puede concluir con cero preguntas?",
+      "section": "Spec Kit",
+      "state": "Artefacto nativo real · Spec Kit commit fijado"
+    },
+    {
+      "id": "sk-13",
+      "title": "Revisar calidad de requisitos",
+      "sub": "Comprobar claridad y aceptación antes de pasar al plan.",
+      "body": "<div class=\"step\"><article class=\"card\"><h2>Revisión de requisitos</h2><pre><code>checklists/requirements.md</code></pre><p class=\"source\">Artefacto nativo guardado</p></article><aside><article class=\"card \"><h2>Resultado</h2><p>Checklist real de calidad: 14/14 ítems revisados.</p></article><article class=\"card accent-card\"><h2>Revisión</h2><p>No es tasks.md ni prueba de implementación; revisa claridad de intención.</p></article><a class=\"source\" target=\"_blank\" href=\"../material-docente/recorridos/spec-kit/artefactos/001-cancelacion/checklists/requirements.md\">Documento / evidencia completo ↗</a></aside></div>",
+      "note": "Método real: agente de esta ejecución leyó y aplicó skills instaladas; CLI y scripts nativos se ejecutaron con logs. No se afirma invocación slash en UI. Comprobar claridad y aceptación antes de pasar al plan.",
+      "question": "¿Qué revisa una checklist de requisitos que todavía no pueden demostrar tests de código?",
+      "section": "Spec Kit",
+      "state": "Artefacto nativo real · Spec Kit commit fijado"
+    },
+    {
+      "id": "sk-14",
+      "title": "Contexto técnico para el plan",
+      "sub": "Ahora sí: stack, arquitectura observada y restricciones.",
+      "body": "<div class=\"step\"><article class=\"card\"><h2>Conversación del agente · Codex</h2><pre><code>$speckit-plan\nDjango, templates, sesión, SQLite, uv.\nCupo calculado; transición atómica.\nMantener arquitectura y datos base.</code></pre><p class=\"source\">Entrada resumida · <a target=\"_blank\" href=\"../material-docente/recorridos/spec-kit/entradas.md\">registro completo ↗</a></p></article><aside><article class=\"card \"><h2>Resultado</h2><p>Plan y artefactos técnicos acordes al repositorio.</p></article><article class=\"card accent-card\"><h2>Revisar antes de continuar</h2><p>Justificar mecanismo SQLite; no asumir bloqueo de filas.</p></article><a class=\"source\" target=\"_blank\" href=\"../material-docente/recorridos/spec-kit/README.md\">Documentos y recorrido completos ↗</a></aside></div>",
+      "note": "Ahora sí: stack, arquitectura observada y restricciones. La diapositiva abrevia la entrada para proyectar; el registro completo enlazado conserva contexto y decisiones realmente usados. La invocación corresponde a la integración Codex verificada.",
+      "question": "¿Qué contexto técnico necesita el plan además de la spec de negocio?",
+      "section": "Spec Kit",
+      "state": "Recorrido real completo · leer README y logs"
+    },
+    {
+      "id": "sk-15",
+      "title": "Leer el plan y sus productos",
+      "sub": "La estrategia tiene razones y productos técnicos relacionados.",
+      "body": "<div class=\"anatomy\"><aside class=\"card\"><h2>plan.md</h2><ol><li>Summary</li><li>Technical Context</li><li>Constitution Check</li><li>Project Structure</li><li>Research / Design ←</li></ol></aside><article class=\"document\"><pre><code>D2/FR-004: Contar confirmadas en anotaciones y validación Admin, sin contador de cupos.\nEvita dos fuentes de verdad; una transición cambia disponibilidad y repetir no cambia conteo.</code></pre><p class=\"annotation\">La decisión tiene requisito de origen y justificación técnica.</p><a class=\"source\" target=\"_blank\" href=\"../material-docente/recorridos/spec-kit/artefactos/001-cancelacion/plan.md\">Documento completo ↗</a></article></div>",
+      "note": "Método real: agente de esta ejecución leyó y aplicó skills instaladas; CLI y scripts nativos se ejecutaron con logs. No se afirma invocación slash en UI. La estrategia tiene razones y productos técnicos relacionados.",
+      "question": "¿Por qué data-model y contratos acompañan al plan en esta versión?",
+      "section": "Spec Kit",
+      "state": "Artefacto nativo real · Spec Kit commit fijado"
+    },
+    {
+      "id": "sk-16",
+      "title": "Revisar decisiones contra la spec",
+      "sub": "La implementación propuesta debe preservar el comportamiento.",
+      "body": "<table><thead><tr><th>Regla</th><th>Decisión del plan</th></tr></thead><tbody><tr><td>Plazo ≥ 24 h</td><td>Comparar instantes con zona y reloj fijo.</td></tr><tr><td>Liberar un cupo</td><td>Contar sólo confirmadas.</td></tr><tr><td>Historial</td><td>Conservar registro, relación y fecha.</td></tr><tr><td>Repetición</td><td>Comprobar cancelada antes de plazo.</td></tr></tbody></table>",
+      "note": "La implementación propuesta debe preservar el comportamiento.",
+      "question": "¿Cómo justificamos IMMEDIATE a partir del riesgo de transición simultánea?",
+      "section": "Spec Kit",
+      "state": "Recorrido real completo · leer README y logs"
+    },
+    {
+      "id": "sk-17",
+      "title": "Generar tareas",
+      "sub": "Traducir estrategia a trabajo ejecutable.",
+      "body": "<div class=\"step\"><article class=\"card\"><h2>Conversación del agente · Codex</h2><pre><code>$speckit-tasks\nGenera tareas del plan revisado,\ncon dependencias y verificación F1.</code></pre><p class=\"source\">Entrada resumida · <a target=\"_blank\" href=\"../material-docente/recorridos/spec-kit/entradas.md\">registro completo ↗</a></p></article><aside><article class=\"card \"><h2>Resultado</h2><p>tasks.md con fases e historias, IDs y rutas.</p></article><article class=\"card accent-card\"><h2>Revisar antes de continuar</h2><p>Buscar cada regla de la spec en una tarea y su evidencia de cierre.</p></article><a class=\"source\" target=\"_blank\" href=\"../material-docente/recorridos/spec-kit/README.md\">Documentos y recorrido completos ↗</a></aside></div>",
+      "note": "Traducir estrategia a trabajo ejecutable. La diapositiva abrevia la entrada para proyectar; el registro completo enlazado conserva contexto y decisiones realmente usados. La invocación corresponde a la integración Codex verificada.",
+      "question": "¿Qué parte del plan debe estar estable antes de generar tareas?",
+      "section": "Spec Kit",
+      "state": "Recorrido real completo · leer README y logs"
+    },
+    {
+      "id": "sk-18",
+      "title": "Leer dependencias y cierre",
+      "sub": "Formato nativo con IDs; paralelizar sólo lo independiente.",
+      "body": "<div class=\"anatomy\"><aside class=\"card\"><h2>tasks.md</h2><ol><li>Phase / historia</li><li>Task ID ←</li><li>[P] independiente</li><li>[USx] historia</li><li>Dependencia y cierre</li></ol></aside><article class=\"document\"><pre><code>- [x] T008 [US2] Añadir re_enrollment_unavailable a register/MESSAGES en activities/services.py y estado cancelada en templates/activities/detail.html; depende T005; añadir test D-SF1-08 en activities/tests/test_cancellation.py; cierre: intento tras cancelación no crea registro ni IntegrityError, explica F2 (FR-010).</code></pre><p class=\"annotation\">T008 cierra con el test SF1-08; la marca se apoya en logs.</p><a class=\"source\" target=\"_blank\" href=\"../material-docente/recorridos/spec-kit/artefactos/001-cancelacion/tasks.md\">Documento completo ↗</a></article></div>",
+      "note": "Método real: agente de esta ejecución leyó y aplicó skills instaladas; CLI y scripts nativos se ejecutaron con logs. No se afirma invocación slash en UI. Formato nativo con IDs; paralelizar sólo lo independiente.",
+      "question": "¿Qué evidencia cierra T008 y qué dependencia tiene?",
+      "section": "Spec Kit",
+      "state": "Artefacto nativo real · Spec Kit commit fijado"
+    },
+    {
+      "id": "sk-19",
+      "title": "Analizar consistencia",
+      "sub": "La revisión puede detectar requisitos sin cobertura.",
+      "body": "<div class=\"step\"><article class=\"card\"><h2>Revisión del agente · analyze</h2><pre><code>$speckit-analyze\nContrastar constitución, spec,\nplan y tareas (solo lectura).</code></pre><p class=\"source\">Hallazgos reales C1 HIGH y U1 MEDIUM</p></article><aside><article class=\"card \"><h2>Resultado</h2><p>C1: faltaba test explícito SF1-08.<br>U1: faltaba prueba de migración previa.</p></article><article class=\"card accent-card\"><h2>Revisión</h2><p>Corregir tasks fuera de analyze; volver a revisar cobertura.</p></article><a class=\"source\" target=\"_blank\" href=\"../material-docente/recorridos/spec-kit/analyze-antes.md\">Documento / evidencia completo ↗</a></aside></div>",
+      "note": "Método real: agente de esta ejecución leyó y aplicó skills instaladas; CLI y scripts nativos se ejecutaron con logs. No se afirma invocación slash en UI. Análisis real guardado. T008 implementaba rechazo F2 pero no incluía test explícito SF1-08; T002 preservaba datos pero sin prueba con datos anteriores. Analyze no editó documentos. La corrección siguiente se realizó fuera de esa skill.",
+      "question": "¿Qué omisión encontró analyze y por qué no la corrigió durante el análisis?",
+      "section": "Spec Kit",
+      "state": "Artefacto nativo real · Spec Kit commit fijado"
+    },
+    {
+      "id": "sk-20",
+      "title": "Corregir donde corresponde",
+      "sub": "Dos omisiones reales se corrigen antes de implementar.",
+      "body": "<div class=\"columns\"><article class=\"card \"><h2>Corrección en tasks.md</h2><p>T008: añadir test SF1-08.<br>T002: añadir MigrationExecutor con datos anteriores.<br>Spec y constitución se conservan.</p></article><article class=\"card accent-card\"><h2>Revisión posterior</h2><p>15/15 obligaciones FR + SC con tareas verificables.<br>0 hallazgos críticos, altos o medios.<br>Todavía falta implementar.</p></article></div><p class=\"caption\"><a target=\"_blank\" href=\"../material-docente/recorridos/spec-kit/analyze-despues.md\">Análisis real después de corregir ↗</a></p>",
+      "note": "Ejercicio preparado explícito. Si el hallazgo cambia intención, volver a spec; si falta ejecución, corregir tareas.",
+      "question": "¿Qué archivo se corrige para cada hallazgo y qué revisión se repite después?",
+      "section": "Spec Kit",
+      "state": "Corrección real · artefactos; no resultado de código"
+    },
+    {
+      "id": "sk-21",
+      "title": "Implementar lo revisado",
+      "sub": "Conversación del agente · no basta con completar casillas.",
+      "body": "<div class=\"step\"><article class=\"card\"><h2>Conversación del agente · Codex</h2><pre><code>$speckit-implement\nEjecuta tareas revisadas de F1\ny conserva evidencia por escenario.</code></pre><p class=\"source\">Entrada resumida · <a target=\"_blank\" href=\"../material-docente/recorridos/spec-kit/entradas.md\">registro completo ↗</a></p></article><aside><article class=\"card \"><h2>Resultado</h2><p>Código y migración; progreso de tasks.md.</p></article><article class=\"card accent-card\"><h2>Revisar antes de continuar</h2><p>Revisar cambios, errores y resultados antes de evaluar cierre.</p></article><a class=\"source\" target=\"_blank\" href=\"../material-docente/recorridos/spec-kit/README.md\">Documentos y recorrido completos ↗</a></aside></div>",
+      "note": "Aplicación real de la skill leída por el agente actual. Hubo tests rojos por servicio inexistente y primera pasada 37/38 por fixture de sesión 2030; se corrigió expiración del fixture. La intención F1 no cambió. Leer tests-rojo.txt y tests-primer-verde.txt en el recorrido. Código propio de esta copia, no copiar solución genérica. La diapositiva abrevia la entrada para proyectar; el registro completo enlazado conserva contexto y decisiones realmente usados. La invocación corresponde a la integración Codex verificada.",
+      "question": "¿Qué nos enseña un test rojo antes de implementar la lógica?",
+      "section": "Spec Kit",
+      "state": "Recorrido real completo · leer README y logs"
+    },
+    {
+      "id": "sk-22",
+      "title": "Verificar la misma F1",
+      "sub": "Terminal y aplicación · comparar contra escenarios acordados.",
+      "body": "<div class=\"anatomy\"><aside class=\"card\"><h2>Resultado real</h2><ol><li>39 tests locales</li><li>39 en Docker</li><li>Migración y reloj fijo</li><li>Concurrencia</li><li>9 comprobaciones UI</li></ol></aside><article class=\"document\"><pre><code>Ran 39 tests in 5.750s\n\nOK\nFound 39 test(s).\nSystem check identified no issues (0 silenced).</code></pre><p class=\"annotation\">Código propio de Spec Kit; mismos escenarios de aceptación F1.</p><a class=\"source\" target=\"_blank\" href=\"../material-docente/recorridos/spec-kit/tests-local-final39.txt\">Documento completo ↗</a></article></div>",
+      "note": "Resultado final: 39 tests locales y Docker, 9 comprobaciones UI guardadas. Desglose: 21 de baseline v1, 17 F1 y una corrección transversal D-B07; su prueba reproduce la espera de un escritor y cruce del inicio sin sleeps. La primera pasada de F1 tuvo 37/38 por vencimiento de fixture de sesión al cambiar reloj a 2030; se corrigió fixture, luego 38/38. La revisión técnica posterior añadió register bajo IMMEDIATE, final 39/39. Los logs de cada etapa quedan preservados; ningún fallo cambia la regla de negocio.",
+      "question": "¿Qué cambió entre la primera pasada y las 39 pruebas finales?",
+      "section": "Spec Kit",
+      "state": "Recorrido real completo · leer README y logs"
+    },
+    {
+      "id": "sk-22a",
+      "title": "Spec Kit: resultado en la aplicación",
+      "sub": "Captura real · copia independiente en localhost:8013.",
+      "body": "<div class=\"evidence-grid\"><a target=\"_blank\" href=\"../material-docente/recorridos/spec-kit/capturas/03-cancelacion-realizada.png\"><img src=\"../material-docente/recorridos/spec-kit/capturas/03-cancelacion-realizada.png\" alt=\"Inscripción cancelada en la implementación propia del recorrido Spec Kit\"></a><article class=\"card accent-card\"><h2>9 comprobaciones UI</h2><p>Confirmación y cancelación.<br>Repetición sin segundo efecto.<br>Disponibilidad y rechazo F2.<br>Rechazo cuando faltan12 h.</p><a class=\"source\" href=\"http://localhost:8013\" target=\"_blank\">Demo Spec Kit ↗</a> · <a class=\"source\" target=\"_blank\" href=\"../material-docente/recorridos/spec-kit/capturas/verificacion.json\">Resultado real ↗</a></article></div>",
+      "note": "PD-07. Estado inicial: copiaSpecKit propia con seed y cuentaana/untdf-demo-2026. Mostrar formulario confirmado y resultado. Capturas guardadas por el revisor con Chrome 152 a1280x720 y9 asserts. Temporal exactamente 24 h y−1s se prueba con reloj fijo, no capturaen vivo. Recuperación: README/checkpoints y las seis capturas. Volver sk-22a.",
+      "question": "¿Qué datos observables permanecen iguales al repetir la cancelación?",
+      "section": "Spec Kit",
+      "state": "Captura real · Spec Kit"
+    },
+    {
+      "id": "sk-23",
+      "title": "Evaluar el resultado contra artefactos",
+      "sub": "Converge revisa implementación y evidencia después de implement.",
+      "body": "<div class=\"columns\"><article class=\"card \"><h2>Resultado de converge</h2><p>0 gaps de F1.<br>11 FR y 4 SC contrastados.<br>39 tests local y Docker.<br>9 comprobaciones UI reales.</p></article><article class=\"card accent-card\"><h2>Qué se conserva</h2><p>12 tareas completas.<br>Tasks sin cambios durante converge.<br>Sin nueva fase vacía.<br>Si hubiera gaps: agregar tareas y volver a implementar.</p></article></div><p class=\"caption\"><a target=\"_blank\" href=\"../material-docente/recorridos/spec-kit/converge.md\">Informe real de convergencia ↗</a></p>",
+      "note": "Convergencia final real: 11 FR, 4 SC, 5 principios, 6 decisiones y 12 tareas contrastadas con código, 39 tests local/Docker y 9 comprobaciones UI. Cero gaps; los hashes tasks antes/después son iguales, sin fase vacía ni tarea inventada. La primera convergencia 38 tests/11 tareas está preservada en primera-pasada-converge.md. La revisión transversal posterior añadió T012 y prueba D-B07 fuera de converge; se corrigió implementación y luego se volvió a evaluar. Leer converge.md y revision-transversal.md; cantidad de tests no compara calidad con OpenSpec.",
+      "question": "¿Por qué cero gaps no exige agregar una fase vacía a tasks?",
+      "section": "Spec Kit",
+      "state": "Recorrido real completo · leer README y logs"
+    },
+    {
+      "id": "sk-24",
+      "title": "Cerrar y recuperar el recorrido",
+      "sub": "Guardar un estado reproducible y documentos coherentes.",
+      "body": "<div class=\"step\"><article class=\"card\"><h2>Terminal y documentos</h2><pre><code>spec-kit-preimplementacion.tar.gz\nspec-kit-f1.tar.gz\nExtraer a carpeta nueva; sync/migrate/seed.</code></pre></article><aside><article class=\"card \"><h2>Resultado</h2><p>Dos checkpoints reales y manifiestos con checksum en material-docente/checkpoints.</p></article><article class=\"card accent-card\"><h2>Revisar antes de continuar</h2><p>Usar quickstart y README; cambiar puerto/proyecto si se abre una segunda copia.</p></article><a class=\"source\" target=\"_blank\" href=\"../material-docente/recorridos/spec-kit/README.md\">Documentos y recorrido completos ↗</a></aside></div>",
+      "note": "Checkpoints reales material-docente/checkpoints/spec-kit-preimplementacion.tar.gz y spec-kit-f1.tar.gz, raíz spec-kit/. Extraer a carpeta nueva; uv sync --locked, migrate y seed_demo. Puerto 8013 / Compose sdd-speckit y SQLite independiente. Para una segunda copia simultánea cambiar ambos; nunca extraer sobre base alumno. Quickstart enlazado trae comandos completos. Resultado guardado permite continuar sin agente.",
+      "question": "¿Qué checkpoint usarían para revisar el plan y cuál para mostrar el resultado?",
+      "section": "Spec Kit",
+      "state": "Recorrido real completo · leer README y logs"
+    },
+    {
+      "id": "sk-25",
+      "title": "Problemas de preparación y coherencia",
+      "sub": "La versión fijada define sintaxis e integración.",
+      "body": "<div class=\"columns\"><article class=\"card \"><h2>Preparación: problema ejecutado</h2><p>Terminal: specify plan --help.<br>Resultado: No such command plan.<br>Recuperación: $speckit-plan en la conversación de Codex.</p></article><article class=\"card accent-card\"><h2>Revisión real de artefactos</h2><p>Faltaban prueba SF1-08 y migración con datos previos.<br>Se corrigieron T008 y T002 fuera de analyze; revisión posterior15/15.</p></article></div><p class=\"caption\"><a target=\"_blank\" href=\"../material-docente/recorridos/spec-kit/problema-terminal-plan.txt\">Salida real del problema de preparación ↗</a></p>",
+      "note": "La orden fallida fue un ensayo deliberado y no mutante para enseñar lugares de invocación. Está realmente ejecutada. No proponer correr plan en terminal. Método de recuperación: Codex en la copia inicializada, skill $speckit-plan con contexto técnico. La segunda dificultad fue una omisión real en tareas y se corrigió antes de implementar.",
+      "question": "¿Qué explica No such command plan y dónde se invoca el paso correcto?",
+      "section": "Spec Kit",
+      "state": "Recorrido real completo · leer README y logs"
+    },
+    {
+      "id": "sk-26",
+      "title": "Referencia del recorrido",
+      "sub": "Principios y comportamiento antes de estrategia y tareas.",
+      "body": "<table><thead><tr><th>Paso</th><th>Entrada</th><th>Revisión</th></tr></thead><tbody><tr><td>Constitution / specify</td><td>Principios y necesidad</td><td>Reglas claras y alcance F1.</td></tr><tr><td>Clarify / plan</td><td>Decisiones y stack</td><td>Fronteras y razones técnicas.</td></tr><tr><td>Tasks / analyze</td><td>Trabajo y consistencia</td><td>Dependencias y cobertura.</td></tr><tr><td>Implement / converge</td><td>Cambios y evidencia</td><td>Aceptación y gaps restantes.</td></tr></tbody></table><p class=\"caption\"><a target=\"_blank\" href=\"../material-docente/recorridos/spec-kit/README.md\">Recorrido completo ↗</a> · <a href=\"fundamentos.html\">Volver a fundamentos ↗</a></p>",
+      "note": "Principios y comportamiento antes de estrategia y tareas.",
+      "question": "¿Qué entrada, archivo y evidencia corresponden al siguiente paso del recorrido?",
+      "section": "Spec Kit",
+      "state": "Recorrido real completo · leer README y logs"
+    }
+  ]
+}

@@ -1,0 +1,574 @@
+{
+  "functionals": [
+    {
+      "name": "fundamentos",
+      "test": "extremos",
+      "pass": true
+    },
+    {
+      "name": "fundamentos",
+      "test": "teclado y Home/End",
+      "pass": true
+    },
+    {
+      "name": "fundamentos",
+      "test": "foco enlace no avanza",
+      "pass": true
+    },
+    {
+      "name": "fundamentos",
+      "test": "índice Escape y selección",
+      "pass": true
+    },
+    {
+      "name": "fundamentos",
+      "test": "URL y recarga",
+      "pass": true
+    },
+    {
+      "name": "fundamentos",
+      "test": "pantalla completa",
+      "pass": true
+    },
+    {
+      "name": "fundamentos",
+      "test": "fragmentos bidireccionales y memoria",
+      "pass": true
+    },
+    {
+      "name": "openspec",
+      "test": "extremos",
+      "pass": true
+    },
+    {
+      "name": "openspec",
+      "test": "teclado y Home/End",
+      "pass": true
+    },
+    {
+      "name": "openspec",
+      "test": "foco enlace no avanza",
+      "pass": true
+    },
+    {
+      "name": "openspec",
+      "test": "índice Escape y selección",
+      "pass": true
+    },
+    {
+      "name": "openspec",
+      "test": "URL y recarga",
+      "pass": true
+    },
+    {
+      "name": "openspec",
+      "test": "pantalla completa",
+      "pass": true
+    },
+    {
+      "name": "spec-kit",
+      "test": "extremos",
+      "pass": true
+    },
+    {
+      "name": "spec-kit",
+      "test": "teclado y Home/End",
+      "pass": true
+    },
+    {
+      "name": "spec-kit",
+      "test": "foco enlace no avanza",
+      "pass": true
+    },
+    {
+      "name": "spec-kit",
+      "test": "índice Escape y selección",
+      "pass": true
+    },
+    {
+      "name": "spec-kit",
+      "test": "URL y recarga",
+      "pass": true
+    },
+    {
+      "name": "spec-kit",
+      "test": "pantalla completa",
+      "pass": true
+    }
+  ],
+  "errors": [],
+  "links": [
+    {
+      "name": "fundamentos",
+      "href": "../material-docente/evidencia-coordinacion/base-browser/resultado.json",
+      "exists": true
+    },
+    {
+      "name": "fundamentos",
+      "href": "../material-docente/cancelacion/research.md",
+      "exists": true
+    },
+    {
+      "name": "fundamentos",
+      "href": "../material-docente/cancelacion/spec.md",
+      "exists": true
+    },
+    {
+      "name": "fundamentos",
+      "href": "../material-docente/cancelacion/spec.md",
+      "exists": true
+    },
+    {
+      "name": "fundamentos",
+      "href": "../material-docente/cancelacion/spec.md",
+      "exists": true
+    },
+    {
+      "name": "fundamentos",
+      "href": "../material-docente/cancelacion/spec.md",
+      "exists": true
+    },
+    {
+      "name": "fundamentos",
+      "href": "../material-docente/cancelacion/plan.md",
+      "exists": true
+    },
+    {
+      "name": "fundamentos",
+      "href": "../material-docente/cancelacion/plan.md",
+      "exists": true
+    },
+    {
+      "name": "fundamentos",
+      "href": "../material-docente/cancelacion/tasks.md",
+      "exists": true
+    },
+    {
+      "name": "fundamentos",
+      "href": "../material-docente/cancelacion/trazabilidad.md",
+      "exists": true
+    },
+    {
+      "name": "fundamentos",
+      "href": "../practicas/solucion-f1/activities/tests/test_f1.py",
+      "exists": true
+    },
+    {
+      "name": "fundamentos",
+      "href": "../material-docente/cancelacion/trazabilidad.md",
+      "exists": true
+    },
+    {
+      "name": "fundamentos",
+      "href": "../practicas/solucion-f1/activities/tests/test_f1.py",
+      "exists": true
+    },
+    {
+      "name": "fundamentos",
+      "href": "../material-docente/cancelacion/trazabilidad.md",
+      "exists": true
+    },
+    {
+      "name": "fundamentos",
+      "href": "../practicas/solucion-f1/activities/tests/test_f1.py",
+      "exists": true
+    },
+    {
+      "name": "fundamentos",
+      "href": "../practicas/solucion-f1/activities/services.py",
+      "exists": true
+    },
+    {
+      "name": "fundamentos",
+      "href": "../material-docente/evidencia-coordinacion/f1-browser/02-confirmacion.png",
+      "exists": true
+    },
+    {
+      "name": "fundamentos",
+      "href": "../material-docente/evidencia-coordinacion/f1-browser/resultado.json",
+      "exists": true
+    },
+    {
+      "name": "fundamentos",
+      "href": "../material-docente/cancelacion/verificacion.md",
+      "exists": true
+    },
+    {
+      "name": "fundamentos",
+      "href": "../material-docente/cancelacion/verificacion.md",
+      "exists": true
+    },
+    {
+      "name": "fundamentos",
+      "href": "openspec.html",
+      "exists": true
+    },
+    {
+      "name": "fundamentos",
+      "href": "spec-kit.html",
+      "exists": true
+    },
+    {
+      "name": "fundamentos",
+      "href": "../demo-inscripciones/README.md",
+      "exists": true
+    },
+    {
+      "name": "fundamentos",
+      "href": "index.html",
+      "exists": true
+    },
+    {
+      "name": "fundamentos",
+      "href": "index.html",
+      "exists": true
+    },
+    {
+      "name": "fundamentos",
+      "href": "notas/fundamentos.html#sdd-22",
+      "exists": true
+    },
+    {
+      "name": "openspec",
+      "href": "../material-docente/checkpoints/base-v1-manifest.json",
+      "exists": true
+    },
+    {
+      "name": "openspec",
+      "href": "../material-docente/recorridos/openspec/README.md",
+      "exists": true
+    },
+    {
+      "name": "openspec",
+      "href": "../material-docente/recorridos/preparacion/instalar-openspec.sh",
+      "exists": true
+    },
+    {
+      "name": "openspec",
+      "href": "../material-docente/recorridos/openspec/01-init.txt",
+      "exists": true
+    },
+    {
+      "name": "openspec",
+      "href": "../material-docente/recorridos/openspec/README.md",
+      "exists": true
+    },
+    {
+      "name": "openspec",
+      "href": "../material-docente/recorridos/openspec/artefactos/previo/openspec/specs/inscripciones/spec.md",
+      "exists": true
+    },
+    {
+      "name": "openspec",
+      "href": "../material-docente/recorridos/openspec/README.md",
+      "exists": true
+    },
+    {
+      "name": "openspec",
+      "href": "../material-docente/recorridos/openspec/artefactos/previo/openspec/changes/cancelar-inscripcion/research.md",
+      "exists": true
+    },
+    {
+      "name": "openspec",
+      "href": "../material-docente/recorridos/openspec/README.md",
+      "exists": true
+    },
+    {
+      "name": "openspec",
+      "href": "../material-docente/recorridos/openspec/artefactos/previo/openspec/changes/cancelar-inscripcion/proposal.md",
+      "exists": true
+    },
+    {
+      "name": "openspec",
+      "href": "../material-docente/recorridos/openspec/artefactos/previo/openspec/changes/cancelar-inscripcion/specs/inscripciones/spec.md",
+      "exists": true
+    },
+    {
+      "name": "openspec",
+      "href": "../material-docente/recorridos/openspec/artefactos/previo/openspec/changes/cancelar-inscripcion/specs/inscripciones/spec.md",
+      "exists": true
+    },
+    {
+      "name": "openspec",
+      "href": "../material-docente/recorridos/openspec/artefactos/previo/openspec/changes/cancelar-inscripcion/design.md",
+      "exists": true
+    },
+    {
+      "name": "openspec",
+      "href": "../material-docente/recorridos/openspec/artefactos/previo/openspec/changes/cancelar-inscripcion/tasks.md",
+      "exists": true
+    },
+    {
+      "name": "openspec",
+      "href": "../material-docente/recorridos/openspec/artefactos/previo/openspec/changes/cancelar-inscripcion/revision.md",
+      "exists": true
+    },
+    {
+      "name": "openspec",
+      "href": "../material-docente/recorridos/openspec/README.md",
+      "exists": true
+    },
+    {
+      "name": "openspec",
+      "href": "../material-docente/recorridos/openspec/README.md",
+      "exists": true
+    },
+    {
+      "name": "openspec",
+      "href": "../material-docente/recorridos/openspec/artefactos/final/openspec/changes/archive/2026-10-01-cancelar-inscripcion/evidence/local-suite.stderr.txt",
+      "exists": true
+    },
+    {
+      "name": "openspec",
+      "href": "../material-docente/recorridos/openspec/artefactos/final/openspec/changes/archive/2026-10-01-cancelar-inscripcion/evidence/docker-suite.stderr.txt",
+      "exists": true
+    },
+    {
+      "name": "openspec",
+      "href": "../material-docente/recorridos/openspec/artefactos/final/openspec/changes/archive/2026-10-01-cancelar-inscripcion/evidence/docker-04-cancelada.png",
+      "exists": true
+    },
+    {
+      "name": "openspec",
+      "href": "../material-docente/recorridos/openspec/artefactos/final/openspec/changes/archive/2026-10-01-cancelar-inscripcion/evidence/docker-ui-observations.json",
+      "exists": true
+    },
+    {
+      "name": "openspec",
+      "href": "../material-docente/recorridos/openspec/04-archive.json",
+      "exists": true
+    },
+    {
+      "name": "openspec",
+      "href": "../material-docente/recorridos/openspec/04-sync-comprobacion.json",
+      "exists": true
+    },
+    {
+      "name": "openspec",
+      "href": "../material-docente/recorridos/openspec/04-sync-comprobacion.json",
+      "exists": true
+    },
+    {
+      "name": "openspec",
+      "href": "../material-docente/recorridos/openspec/artefactos/final/openspec/specs/inscripciones/spec.md",
+      "exists": true
+    },
+    {
+      "name": "openspec",
+      "href": "../material-docente/checkpoints/openspec-preimplementacion-manifest.json",
+      "exists": true
+    },
+    {
+      "name": "openspec",
+      "href": "../material-docente/checkpoints/openspec-final-manifest.json",
+      "exists": true
+    },
+    {
+      "name": "openspec",
+      "href": "../material-docente/recorridos/openspec/README.md",
+      "exists": true
+    },
+    {
+      "name": "openspec",
+      "href": "../material-docente/recorridos/openspec/README.md",
+      "exists": true
+    },
+    {
+      "name": "openspec",
+      "href": "../material-docente/recorridos/openspec/README.md",
+      "exists": true
+    },
+    {
+      "name": "openspec",
+      "href": "spec-kit.html",
+      "exists": true
+    },
+    {
+      "name": "openspec",
+      "href": "index.html",
+      "exists": true
+    },
+    {
+      "name": "openspec",
+      "href": "notas/openspec.html#os-04",
+      "exists": true
+    },
+    {
+      "name": "spec-kit",
+      "href": "../material-docente/checkpoints/base-v1-manifest.json",
+      "exists": true
+    },
+    {
+      "name": "spec-kit",
+      "href": "../material-docente/recorridos/preparacion/specify.sh",
+      "exists": true
+    },
+    {
+      "name": "spec-kit",
+      "href": "../material-docente/recorridos/spec-kit/init.txt",
+      "exists": true
+    },
+    {
+      "name": "spec-kit",
+      "href": "../material-docente/recorridos/spec-kit/entradas.md",
+      "exists": true
+    },
+    {
+      "name": "spec-kit",
+      "href": "../material-docente/recorridos/spec-kit/README.md",
+      "exists": true
+    },
+    {
+      "name": "spec-kit",
+      "href": "../material-docente/recorridos/spec-kit/artefactos/constitution.md",
+      "exists": true
+    },
+    {
+      "name": "spec-kit",
+      "href": "../material-docente/recorridos/spec-kit/entradas.md",
+      "exists": true
+    },
+    {
+      "name": "spec-kit",
+      "href": "../material-docente/recorridos/spec-kit/README.md",
+      "exists": true
+    },
+    {
+      "name": "spec-kit",
+      "href": "../material-docente/recorridos/spec-kit/artefactos/001-cancelacion/spec.md",
+      "exists": true
+    },
+    {
+      "name": "spec-kit",
+      "href": "../material-docente/recorridos/spec-kit/clarify.md",
+      "exists": true
+    },
+    {
+      "name": "spec-kit",
+      "href": "../material-docente/recorridos/spec-kit/artefactos/001-cancelacion/checklists/requirements.md",
+      "exists": true
+    },
+    {
+      "name": "spec-kit",
+      "href": "../material-docente/recorridos/spec-kit/entradas.md",
+      "exists": true
+    },
+    {
+      "name": "spec-kit",
+      "href": "../material-docente/recorridos/spec-kit/README.md",
+      "exists": true
+    },
+    {
+      "name": "spec-kit",
+      "href": "../material-docente/recorridos/spec-kit/artefactos/001-cancelacion/plan.md",
+      "exists": true
+    },
+    {
+      "name": "spec-kit",
+      "href": "../material-docente/recorridos/spec-kit/entradas.md",
+      "exists": true
+    },
+    {
+      "name": "spec-kit",
+      "href": "../material-docente/recorridos/spec-kit/README.md",
+      "exists": true
+    },
+    {
+      "name": "spec-kit",
+      "href": "../material-docente/recorridos/spec-kit/artefactos/001-cancelacion/tasks.md",
+      "exists": true
+    },
+    {
+      "name": "spec-kit",
+      "href": "../material-docente/recorridos/spec-kit/analyze-antes.md",
+      "exists": true
+    },
+    {
+      "name": "spec-kit",
+      "href": "../material-docente/recorridos/spec-kit/analyze-despues.md",
+      "exists": true
+    },
+    {
+      "name": "spec-kit",
+      "href": "../material-docente/recorridos/spec-kit/entradas.md",
+      "exists": true
+    },
+    {
+      "name": "spec-kit",
+      "href": "../material-docente/recorridos/spec-kit/README.md",
+      "exists": true
+    },
+    {
+      "name": "spec-kit",
+      "href": "../material-docente/recorridos/spec-kit/tests-local-final39.txt",
+      "exists": true
+    },
+    {
+      "name": "spec-kit",
+      "href": "../material-docente/recorridos/spec-kit/capturas/03-cancelacion-realizada.png",
+      "exists": true
+    },
+    {
+      "name": "spec-kit",
+      "href": "../material-docente/recorridos/spec-kit/capturas/verificacion.json",
+      "exists": true
+    },
+    {
+      "name": "spec-kit",
+      "href": "../material-docente/recorridos/spec-kit/converge.md",
+      "exists": true
+    },
+    {
+      "name": "spec-kit",
+      "href": "../material-docente/recorridos/spec-kit/README.md",
+      "exists": true
+    },
+    {
+      "name": "spec-kit",
+      "href": "../material-docente/recorridos/spec-kit/problema-terminal-plan.txt",
+      "exists": true
+    },
+    {
+      "name": "spec-kit",
+      "href": "../material-docente/recorridos/spec-kit/README.md",
+      "exists": true
+    },
+    {
+      "name": "spec-kit",
+      "href": "fundamentos.html",
+      "exists": true
+    },
+    {
+      "name": "spec-kit",
+      "href": "index.html",
+      "exists": true
+    },
+    {
+      "name": "spec-kit",
+      "href": "notas/spec-kit.html#sk-04",
+      "exists": true
+    }
+  ],
+  "external": [
+    {
+      "name": "fundamentos",
+      "href": "http://localhost:8000"
+    },
+    {
+      "name": "fundamentos",
+      "href": "http://localhost:8011"
+    },
+    {
+      "name": "fundamentos",
+      "href": "http://localhost:8011"
+    },
+    {
+      "name": "openspec",
+      "href": "http://localhost:8012"
+    },
+    {
+      "name": "spec-kit",
+      "href": "http://localhost:8013"
+    }
+  ]
+}

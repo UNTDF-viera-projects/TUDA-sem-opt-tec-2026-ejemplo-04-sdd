@@ -1,0 +1,162 @@
+[
+  {
+    "deck": "fundamentos",
+    "id": "sdd-18",
+    "seccion": "Necesidad y alcance",
+    "documento": "material-docente/cancelacion/spec.md",
+    "tipo": "fragmento literal con omisiones marcadas",
+    "coincide_normalizando_saltos": true
+  },
+  {
+    "deck": "fundamentos",
+    "id": "sdd-19",
+    "seccion": "Requisitos / F1-R02",
+    "documento": "material-docente/cancelacion/spec.md",
+    "tipo": "fragmento literal con omisiones marcadas",
+    "coincide_normalizando_saltos": true
+  },
+  {
+    "deck": "fundamentos",
+    "id": "sdd-19b",
+    "seccion": "Requisitos / F1-R04 y F1-R05",
+    "documento": "material-docente/cancelacion/spec.md",
+    "tipo": "fragmento literal con omisiones marcadas",
+    "coincide_normalizando_saltos": true
+  },
+  {
+    "deck": "fundamentos",
+    "id": "sdd-20",
+    "seccion": "Escenarios / F1-A02 y F1-A03",
+    "documento": "material-docente/cancelacion/spec.md",
+    "tipo": "fragmento literal con omisiones marcadas",
+    "coincide_normalizando_saltos": true
+  },
+  {
+    "deck": "fundamentos",
+    "id": "sdd-23",
+    "seccion": "Arquitectura y datos",
+    "documento": "material-docente/cancelacion/plan.md",
+    "tipo": "fragmento literal con omisiones marcadas",
+    "coincide_normalizando_saltos": true
+  },
+  {
+    "deck": "fundamentos",
+    "id": "sdd-27",
+    "seccion": "Verificación",
+    "documento": "material-docente/cancelacion/plan.md",
+    "tipo": "fragmento literal con omisiones marcadas",
+    "coincide_normalizando_saltos": true
+  },
+  {
+    "deck": "fundamentos",
+    "id": "sdd-28",
+    "seccion": "T05 / celdas acción, dependencia y cierre",
+    "documento": "material-docente/cancelacion/tasks.md",
+    "tipo": "celdas reales reorganizadas y comentadas",
+    "coincide_normalizando_saltos": true
+  },
+  {
+    "deck": "fundamentos",
+    "id": "sdd-35",
+    "seccion": "Servicio cancel / repetición y reloj bajo reserva",
+    "documento": "practicas/solucion-f1/activities/services.py",
+    "tipo": "fragmento literal con omisiones marcadas",
+    "coincide_normalizando_saltos": true
+  },
+  {
+    "deck": "fundamentos",
+    "id": "sdd-36",
+    "seccion": "Salida local final37",
+    "documento": "material-docente/cancelacion/evidencia/f1-local-tests.txt",
+    "tipo": "selección de líneas reales de salida",
+    "coincide_normalizando_saltos": true
+  },
+  {
+    "deck": "openspec",
+    "id": "os-12",
+    "seccion": "D-F1-02",
+    "documento": "material-docente/recorridos/openspec/artefactos/previo/openspec/changes/cancelar-inscripcion/specs/inscripciones/spec.md",
+    "tipo": "fragmento literal con omisiones marcadas",
+    "coincide_normalizando_saltos": true
+  },
+  {
+    "deck": "openspec",
+    "id": "os-13",
+    "seccion": "D-SF1-02",
+    "documento": "material-docente/recorridos/openspec/artefactos/previo/openspec/changes/cancelar-inscripcion/specs/inscripciones/spec.md",
+    "tipo": "fragmento literal con omisiones marcadas",
+    "coincide_normalizando_saltos": true
+  },
+  {
+    "deck": "openspec",
+    "id": "os-14",
+    "seccion": "Decisión 1",
+    "documento": "material-docente/recorridos/openspec/artefactos/previo/openspec/changes/cancelar-inscripcion/design.md",
+    "tipo": "fragmento literal con omisiones marcadas",
+    "coincide_normalizando_saltos": true
+  },
+  {
+    "deck": "openspec",
+    "id": "os-15",
+    "seccion": "Tarea 2.2 preimplementación",
+    "documento": "material-docente/recorridos/openspec/artefactos/previo/openspec/changes/cancelar-inscripcion/tasks.md",
+    "tipo": "fragmento literal con omisiones marcadas",
+    "coincide_normalizando_saltos": true
+  },
+  {
+    "deck": "openspec",
+    "id": "os-19",
+    "seccion": "Salida local final56",
+    "documento": "material-docente/recorridos/openspec/artefactos/final/openspec/changes/archive/2026-10-01-cancelar-inscripcion/evidence/local-suite.stderr.txt",
+    "tipo": "selección de líneas reales de salida",
+    "coincide_normalizando_saltos": true
+  },
+  {
+    "deck": "openspec",
+    "id": "os-21a",
+    "seccion": "Spec vigente / D-F1-02",
+    "documento": "material-docente/recorridos/openspec/artefactos/final/openspec/specs/inscripciones/spec.md",
+    "tipo": "fragmento literal con omisiones marcadas",
+    "coincide_normalizando_saltos": true
+  },
+  {
+    "deck": "spec-kit",
+    "id": "sk-07",
+    "seccion": "Principio II",
+    "documento": "material-docente/recorridos/spec-kit/artefactos/constitution.md",
+    "tipo": "fragmento literal con omisiones marcadas",
+    "coincide_normalizando_saltos": true
+  },
+  {
+    "deck": "spec-kit",
+    "id": "sk-10",
+    "seccion": "FR-002",
+    "documento": "material-docente/recorridos/spec-kit/artefactos/001-cancelacion/spec.md",
+    "tipo": "fragmento literal con omisiones marcadas",
+    "coincide_normalizando_saltos": true
+  },
+  {
+    "deck": "spec-kit",
+    "id": "sk-15",
+    "seccion": "D2 / FR-004",
+    "documento": "material-docente/recorridos/spec-kit/artefactos/001-cancelacion/plan.md",
+    "tipo": "fragmento literal con omisiones marcadas",
+    "coincide_normalizando_saltos": true
+  },
+  {
+    "deck": "spec-kit",
+    "id": "sk-18",
+    "seccion": "T008",
+    "documento": "material-docente/recorridos/spec-kit/artefactos/001-cancelacion/tasks.md",
+    "tipo": "fragmento literal con omisiones marcadas",
+    "coincide_normalizando_saltos": true
+  },
+  {
+    "deck": "spec-kit",
+    "id": "sk-22",
+    "seccion": "Salida local final39",
+    "documento": "material-docente/recorridos/spec-kit/tests-local-final39.txt",
+    "tipo": "selección de líneas reales de salida",
+    "coincide_normalizando_saltos": true
+  }
+]
