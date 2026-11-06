@@ -10,7 +10,7 @@ from django.core.management.base import CommandError
 from django.db import connections, close_old_connections, transaction
 from django.test import Client, TestCase, TransactionTestCase
 from activities.models import Activity, DemoSeed, Registration
-from activities.services import register, with_availability
+from activities.services import cancel, register, with_availability
 
 NOW = datetime(2030, 10, 1, 12, tzinfo=dt_timezone.utc)
 
@@ -165,3 +165,167 @@ class ConcurrencyTests(TransactionTestCase):
     def test_simultaneous_duplicate(self):
         self.assertCountEqual(self.race([self.ana,self.ana]),["registered","already_registered"])
         self.assertEqual(Registration.objects.count(),1)
+class CancelTests(TestCase):
+    def setUp(self):
+        User=get_user_model()
+        self.ana=User.objects.create_user("ana",password="test-pass")
+        self.bruno=User.objects.create_user("bruno",password="test-pass")
+        self.activity=activity()
+    def test_cancel_on_time_preserves_record_and_frees_quota(self):
+        self.assertEqual(register(student=self.ana,activity_id=self.activity.pk,now=NOW),"registered")
+        before=with_availability().get(pk=self.activity.pk).available
+        self.assertEqual(cancel(student=self.ana,activity_id=self.activity.pk,now=NOW),"cancelled")
+        record=Registration.objects.get(student=self.ana,activity=self.activity)
+        self.assertEqual(record.status,Registration.STATUS_CANCELLED)
+        self.assertIsNotNone(record.cancelled_at)
+        self.assertEqual(with_availability().get(pk=self.activity.pk).available,before+1)
+    def test_cancel_exact_24h_boundary_allowed(self):
+        self.activity.starts_at=NOW+timedelta(hours=24);self.activity.save()
+        self.assertEqual(register(student=self.ana,activity_id=self.activity.pk,now=NOW),"registered")
+        self.assertEqual(cancel(student=self.ana,activity_id=self.activity.pk,now=NOW),"cancelled")
+    def test_cancel_without_registration_not_available(self):
+        self.assertEqual(cancel(student=self.ana,activity_id=self.activity.pk,now=NOW),"not_available")
+class CancelDenialTests(TestCase):
+    def setUp(self):
+        User=get_user_model()
+        self.ana=User.objects.create_user("ana",password="test-pass")
+        self.activity=activity()
+        self.assertEqual(register(student=self.ana,activity_id=self.activity.pk,now=NOW),"registered")
+    def test_cancel_within_24h_denied_without_changes(self):
+        self.activity.starts_at=NOW+timedelta(hours=12);self.activity.save()
+        before=with_availability().get(pk=self.activity.pk).available
+        self.assertEqual(cancel(student=self.ana,activity_id=self.activity.pk,now=NOW),"too_late")
+        record=Registration.objects.get(student=self.ana,activity=self.activity)
+        self.assertEqual(record.status,Registration.STATUS_ACTIVE)
+        self.assertEqual(with_availability().get(pk=self.activity.pk).available,before)
+    def test_cancel_just_inside_boundary_denied(self):
+        self.activity.starts_at=NOW+timedelta(hours=24)-timedelta(seconds=1);self.activity.save()
+        self.assertEqual(cancel(student=self.ana,activity_id=self.activity.pk,now=NOW),"too_late")
+    def test_cancel_started_denied(self):
+        self.activity.starts_at=NOW-timedelta(hours=1);self.activity.save()
+        self.assertEqual(cancel(student=self.ana,activity_id=self.activity.pk,now=NOW),"started")
+        record=Registration.objects.get(student=self.ana,activity=self.activity)
+        self.assertEqual(record.status,Registration.STATUS_ACTIVE)
+    def test_cancel_disabled_future_follows_24h_rule(self):
+        self.activity.is_active=False;self.activity.save()
+        self.assertEqual(cancel(student=self.ana,activity_id=self.activity.pk,now=NOW),"cancelled")
+    def test_cancel_disabled_within_24h_denied(self):
+        self.activity.is_active=False;self.activity.starts_at=NOW+timedelta(hours=12);self.activity.save()
+        self.assertEqual(cancel(student=self.ana,activity_id=self.activity.pk,now=NOW),"too_late")
+    def test_double_cancel_denied_without_moving_quota(self):
+        self.assertEqual(cancel(student=self.ana,activity_id=self.activity.pk,now=NOW),"cancelled")
+        before=with_availability().get(pk=self.activity.pk).available
+        self.assertEqual(cancel(student=self.ana,activity_id=self.activity.pk,now=NOW),"already_cancelled")
+        self.assertEqual(with_availability().get(pk=self.activity.pk).available,before)
+class CancelViewTests(TestCase):
+    def setUp(self):
+        User=get_user_model()
+        self.ana=User.objects.create_user("ana",password="test-pass")
+        self.bruno=User.objects.create_user("bruno",password="test-pass")
+        self.activity=activity()
+        self.assertEqual(register(student=self.ana,activity_id=self.activity.pk,now=NOW),"registered")
+    def url(self):
+        from django.urls import reverse
+        return reverse("cancel",args=[self.activity.pk])
+    def login(self, user):
+        from datetime import timedelta
+        self.client.force_login(user)
+        session=self.client.session;session.set_expiry(NOW+timedelta(days=100));session.save()
+    def test_get_confirm_shows_summary_without_mutating(self):
+        self.login(self.ana)
+        with patch("activities.views.timezone.now",return_value=NOW):
+            response=self.client.get(self.url())
+        self.assertEqual(response.status_code,200)
+        record=Registration.objects.get(student=self.ana,activity=self.activity)
+        self.assertEqual(record.status,Registration.STATUS_ACTIVE)
+    def test_post_executes_redirects_and_messages(self):
+        self.login(self.ana)
+        with patch("activities.views.timezone.now",return_value=NOW):
+            response=self.client.post(self.url(),follow=True)
+        self.assertRedirects(response,"/my-registrations/")
+        record=Registration.objects.get(student=self.ana,activity=self.activity)
+        self.assertEqual(record.status,Registration.STATUS_CANCELLED)
+        messages=list(response.context["messages"])
+        self.assertTrue(any("cancel" in m.tags for m in messages))
+    def test_other_student_cannot_cancel(self):
+        self.login(self.bruno)
+        with patch("activities.views.timezone.now",return_value=NOW):
+            response=self.client.post(self.url())
+        self.assertEqual(response.status_code,404)
+        record=Registration.objects.get(student=self.ana,activity=self.activity)
+        self.assertEqual(record.status,Registration.STATUS_ACTIVE)
+    def test_get_late_redirects_with_message(self):
+        from datetime import timedelta
+        self.login(self.ana)
+        self.activity.starts_at=NOW+timedelta(hours=12);self.activity.save()
+        with patch("activities.views.timezone.now",return_value=NOW):
+            response=self.client.get(self.url(),follow=True)
+        self.assertRedirects(response,"/my-registrations/")
+        messages=list(response.context["messages"])
+        self.assertTrue(any("too_late" in m.tags for m in messages))
+        record=Registration.objects.get(student=self.ana,activity=self.activity)
+        self.assertEqual(record.status,Registration.STATUS_ACTIVE)
+    def test_post_started_denied(self):
+        from datetime import timedelta
+        self.login(self.ana)
+        self.activity.starts_at=NOW-timedelta(hours=1);self.activity.save()
+        with patch("activities.views.timezone.now",return_value=NOW):
+            response=self.client.post(self.url(),follow=True)
+        self.assertRedirects(response,"/my-registrations/")
+        messages=list(response.context["messages"])
+        self.assertTrue(any("started" in m.tags for m in messages))
+        record=Registration.objects.get(student=self.ana,activity=self.activity)
+        self.assertEqual(record.status,Registration.STATUS_ACTIVE)
+class CancelHistoryTests(TestCase):
+    def setUp(self):
+        User=get_user_model()
+        self.ana=User.objects.create_user("ana",password="test-pass")
+        self.bruno=User.objects.create_user("bruno",password="test-pass")
+        self.activity=activity()
+        self.assertEqual(register(student=self.ana,activity_id=self.activity.pk,now=NOW),"registered")
+        self.assertEqual(cancel(student=self.ana,activity_id=self.activity.pk,now=NOW),"cancelled")
+    def test_resubscribe_rejected(self):
+        self.assertEqual(register(student=self.ana,activity_id=self.activity.pk,now=NOW),"no_resubscribe")
+        record=Registration.objects.get(student=self.ana,activity=self.activity)
+        self.assertEqual(record.status,Registration.STATUS_CANCELLED)
+    def test_freed_quota_available_to_other_student(self):
+        self.assertEqual(register(student=self.bruno,activity_id=self.activity.pk,now=NOW),"registered")
+    def test_mine_shows_cancelled_badge_with_date(self):
+        from datetime import timedelta
+        self.client.force_login(self.ana)
+        session=self.client.session;session.set_expiry(NOW+timedelta(days=100));session.save()
+        with patch("activities.views.timezone.now",return_value=NOW):
+            response=self.client.get("/my-registrations/")
+        self.assertContains(response,"Cancelada")
+    def test_second_cancel_shows_message_not_404(self):
+        from datetime import timedelta
+        self.client.force_login(self.ana)
+        session=self.client.session;session.set_expiry(NOW+timedelta(days=100));session.save()
+        with patch("activities.views.timezone.now",return_value=NOW):
+            response=self.client.post("/activities/%s/cancel/" % self.activity.pk,follow=True)
+        self.assertEqual(response.status_code,200)
+        self.assertRedirects(response,"/my-registrations/")
+        messages=list(response.context["messages"])
+        self.assertTrue(any("already_cancelled" in m.tags for m in messages))
+class CancelConcurrencyTests(TransactionTestCase):
+    def setUp(self):
+        self.ana=get_user_model().objects.create_user("a")
+        self.activity=activity(capacity=1)
+        self.assertEqual(register(student=self.ana,activity_id=self.activity.pk,now=NOW),"registered")
+    def race_cancel(self):
+        barrier=Barrier(2)
+        def worker():
+            close_old_connections()
+            try:
+                database=str(connections["default"].settings_dict["NAME"])
+                assert database.endswith("test.sqlite3"), database
+                assert "memory" not in database, database
+                barrier.wait(timeout=10)
+                return cancel(student=self.ana,activity_id=self.activity.pk,now=NOW)
+            finally:connections["default"].close()
+        with ThreadPoolExecutor(max_workers=2) as executor:
+            return list(executor.map(lambda _: worker(),range(2)))
+    def test_simultaneous_cancel_frees_quota_exactly_once(self):
+        self.assertCountEqual(self.race_cancel(),["cancelled","already_cancelled"])
+        self.assertEqual(Registration.objects.filter(status=Registration.STATUS_CANCELLED).count(),1)
+        self.assertEqual(with_availability().get(pk=self.activity.pk).available,1)

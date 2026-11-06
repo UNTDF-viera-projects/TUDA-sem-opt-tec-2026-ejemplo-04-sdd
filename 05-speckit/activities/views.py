@@ -5,7 +5,7 @@ from django.utils import timezone
 from django.views.decorators.http import require_POST
 from .forms import RegistrationForm
 from .models import Registration
-from .services import MESSAGES, register, with_availability
+from .services import MESSAGES, cancel, cancel_block_reason, cancel_deadline, can_cancel, register, with_availability
 
 @login_required
 def catalog(request):
@@ -29,4 +29,26 @@ def enroll(request, pk):
 
 @login_required
 def mine(request):
-    return render(request, "activities/mine.html", {"registrations": Registration.objects.filter(student=request.user).select_related("activity")})
+    now = timezone.now()
+    registrations = Registration.objects.filter(student=request.user).select_related("activity")
+    for registration in registrations:
+        registration.can_cancel = can_cancel(registration, now)
+    return render(request, "activities/mine.html", {"registrations": registrations})
+
+@login_required
+def cancel_request(request, pk):
+    # 404 si la inscripción no es del usuario: nunca se acciona sobre ajenas.
+    registration = get_object_or_404(
+        Registration.objects.select_related("activity"), activity_id=pk, student=request.user
+    )
+    if request.method == "POST":
+        # El servicio es la única autoridad: decide y libera cupo bajo IMMEDIATE.
+        result = cancel(student=request.user, activity_id=pk)
+        messages.info(request, MESSAGES[result], extra_tags=result)
+        return redirect("mine")
+    reason = cancel_block_reason(registration, timezone.now())
+    if reason:
+        messages.info(request, MESSAGES[reason], extra_tags=reason)
+        return redirect("mine")
+    activity = registration.activity
+    return render(request, "activities/cancel_confirm.html", {"activity": activity, "registration": registration, "deadline": cancel_deadline(activity)})
